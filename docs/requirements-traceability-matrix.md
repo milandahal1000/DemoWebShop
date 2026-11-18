@@ -51,23 +51,23 @@ final results are added in Phase 9. No result is marked as executed in this docu
 
 | REQ ID | Derived requirement (assumption) | Scenario(s) | Manual TCs (planned) | Automation |
 |---|---|---|---|---|
-| REQ-REG-01 | A visitor can create an account with a unique, valid email and is signed in or redirected appropriately | SC-REG-01 | TC-001–TC-005 | Yes |
-| REQ-REG-02 | Mandatory fields (first name, last name, email, password, confirm password) must be completed before submission | SC-REG-02 | TC-001–TC-005 | Yes |
-| REQ-REG-03 | Email input must match a valid email format; malformed addresses are rejected | SC-REG-03 | TC-001–TC-005 | Yes |
-| REQ-REG-04 | An email address already linked to an account cannot be registered again | SC-REG-04 | TC-001–TC-005 | Partial |
-| REQ-REG-05 | Password and Confirm password must match | SC-REG-05 | TC-001–TC-005 | Yes |
-| REQ-REG-06 | Password length below the configured minimum is rejected **(minimum assumed 6 — verify)** | SC-REG-06 | TC-001–TC-005 | Partial |
+| REQ-REG-01 | A visitor can create an account with a unique, valid email and is signed in or redirected appropriately | SC-REG-01 | TC-001–TC-006 | Yes |
+| REQ-REG-02 | Mandatory fields (first name, last name, email, password, confirm password) must be completed before submission | SC-REG-02 | TC-001–TC-006 | Yes |
+| REQ-REG-03 | Email input must match a valid email format; malformed addresses are rejected | SC-REG-03 | TC-001–TC-006 | Yes |
+| REQ-REG-04 | An email address already linked to an account cannot be registered again | SC-REG-04 | TC-001–TC-006 | Partial |
+| REQ-REG-05 | Password and Confirm password must match | SC-REG-05 | TC-001–TC-006 | Yes |
+| REQ-REG-06 | Password length below the configured minimum is rejected **(minimum assumed 6 — verify)** | SC-REG-06 | TC-001–TC-006 | Partial |
 
 ### 2.2 Authentication and password recovery
 
 | REQ ID | Derived requirement (assumption) | Scenario(s) | Manual TCs (planned) | Automation |
 |---|---|---|---|---|
-| REQ-AUTH-01 | Valid credentials create an authenticated session and expose account-specific UI | SC-AUTH-01, SC-AUTH-07 | TC-010–TC-016 | Yes |
-| REQ-AUTH-02 | Invalid password and unregistered email are rejected without revealing which value was wrong | SC-AUTH-02, SC-AUTH-03 | TC-010–TC-016 | Yes |
-| REQ-AUTH-03 | Empty login fields produce validation feedback and no session | SC-AUTH-04 | TC-010–TC-016 | Yes |
-| REQ-AUTH-04 | Logout terminates the session and protected pages become inaccessible | SC-AUTH-05, SC-SES-03 | TC-010–TC-016 | Yes |
-| REQ-AUTH-05 | Protected pages redirect unauthenticated users to login and return them to the requested page after authentication | SC-AUTH-06, SC-AUTH-07, SC-SES-01, SC-ORD-03 | TC-010–TC-016 | Partial |
-| REQ-AUTH-06 | Password recovery returns a neutral confirmation regardless of whether the email exists | SC-AUTH-08 | TC-010–TC-016 | No |
+| REQ-AUTH-01 | Valid credentials create an authenticated session and expose account-specific UI | SC-AUTH-01, SC-AUTH-07 | TC-010–TC-017 | Yes |
+| REQ-AUTH-02 | Invalid password and unregistered email are rejected without revealing which value was wrong | SC-AUTH-02, SC-AUTH-03 | TC-010–TC-017 | Yes |
+| REQ-AUTH-03 | Empty login fields produce validation feedback and no session | SC-AUTH-04 | TC-010–TC-017 | Yes |
+| REQ-AUTH-04 | Logout terminates the session and protected pages become inaccessible | SC-AUTH-05, SC-SES-03 | TC-010–TC-017 | Yes |
+| REQ-AUTH-05 | Protected pages redirect unauthenticated users to login and return them to the requested page after authentication | SC-AUTH-06, SC-AUTH-07, SC-SES-01, SC-ORD-03 | TC-010–TC-017 | Partial |
+| REQ-AUTH-06 | Password recovery returns a neutral confirmation regardless of whether the email exists | SC-AUTH-08 | TC-010–TC-017 | No |
 
 ### 2.3 Catalog and navigation
 
@@ -180,8 +180,8 @@ final results are added in Phase 9. No result is marked as executed in this docu
 
 | Module | Requirements | Scenarios | Planned manual cases | Planned automated tests |
 |---|---:|---:|---:|---:|
-| Registration | 6 | 6 | 5 | 2 |
-| Authentication | 6 | 8 | 7 | 5 |
+| Registration | 6 | 6 | 6 | 2 |
+| Authentication | 6 | 8 | 8 | 5 |
 | Catalog / navigation | 4 | 6 | 4 | 2 |
 | Product detail | 6 | 8 | 6 | 4 |
 | Search | 4 | 6 | 4 | 3 |
@@ -193,7 +193,7 @@ final results are added in Phase 9. No result is marked as executed in this docu
 | My account | 4 | 7 | 5 | 2 |
 | Contact / newsletter | 2 | 5 | 4 | 2 |
 | Session / edge | 3 | 4 | 3 | 1 |
-| **Total** | **62** | **91** | **68** | **43** |
+| **Total** | **62** | **91** | **70** | **43** |
 
 Planned manual cases are fewer than scenarios because data variations (for example
 quantity 0 / negative / non-numeric / large) are consolidated into single cases with
