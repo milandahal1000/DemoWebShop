@@ -103,14 +103,13 @@ on exact prices must be re-checked immediately before execution and recorded as 
 | Status | Count |
 |---|---:|
 | Total written | 14 |
-| Passed | 0 |
-| Failed | 0 |
+| Passed | 8 |
+| Failed | 1 |
 | Blocked | 0 |
-| Not Run | 14 |
-| Confirmed defects | 0 |
+| Not Run | 5 |
+| Confirmed defects | 1 |
 
-_No manual execution has occurred yet. This table will be replaced with real results as
-batches are executed and reviewed._
+_Registration batch complete. Authentication in progress: TC-012 failed and is linked to BUG-001 (user enumeration). Remaining authenticated cases must be re-checked against the failed-login behaviour where relevant._
 
 ---
 
@@ -130,9 +129,9 @@ batches are executed and reviewed._
 | Test Data | Gender: Male · First name: `Milan` · Last name: `Dahal` · Email: `<TEST_EMAIL>` · Password: `<TEST_PASSWORD>` · Confirm password: `<TEST_PASSWORD>` |
 | Test Steps | 1. Open the home page.<br>2. Click **Register** in the header.<br>3. Confirm the Registration page is displayed.<br>4. Complete every mandatory field with the test data.<br>5. Click **Register**.<br>6. Observe the confirmation and the header state.<br>7. Reload the page. |
 | Expected Result | Registration completes with a success confirmation (expected message: "Your registration completed" — exact wording to be recorded). The header shows the account email and a **Log out** link, confirming an authenticated session. The confirmation persists after reload without duplicate submission. |
-| Actual Result | _Not executed_ |
-| Status | **Not Run** |
-| Evidence | — |
+| Actual Result | Registration succeeded. The page displayed **"Your registration completed"** and redirected to `/registerresult/1`. The header showed the account email and a **Log out** link, confirming an authenticated session. The session survived a page reload, and `/customer/info` opened the account page. |
+| Status | **Pass** |
+| Evidence | `docs/screenshots/manual/TC-001_registration-form.png`<br>`docs/screenshots/manual/TC-001_registration-success.png` |
 | Linked defect | — |
 | Notes | This case creates the shared test account used by the remaining authenticated cases. Record the email/password in local `.env` only. This is a documented dependency, not a hidden one. |
 
@@ -152,11 +151,11 @@ batches are executed and reviewed._
 | Test Data | All fields empty; gender left unselected |
 | Test Steps | 1. Open `/register`.<br>2. Leave every field empty.<br>3. Click **Register**.<br>4. Record every validation message displayed.<br>5. Confirm the page does not navigate away and no session is created. |
 | Expected Result | Submission is blocked. Each mandatory field shows a required-field message (e.g. "First name is required."). The URL remains `/register`, the form retains no invalid submission, and no account or session is created. |
-| Actual Result | _Not executed_ |
-| Status | **Not Run** |
-| Evidence | — |
+| Actual Result | Submission was blocked and the form stayed on the registration page. Page-level messages were displayed: **"First name is required."**, **"Last name is required."**, **"Email is required."**, and **"Password is required."** for **both** the Password and Confirm password fields. No message appeared for Gender. No success message or redirect occurred. |
+| Status | **Pass** |
+| Evidence | `docs/screenshots/manual/TC-002_empty-form-errors.png` |
 | Linked defect | — |
-| Notes | Capture the exact message text — automation assertions will reuse it. Verify whether validation is client-side, server-side, or both. |
+| Notes | The absence of a Gender message is consistent with Gender being optional (assumption now supported). Capture the exact message text — automation assertions will reuse it. Verify whether validation is client-side, server-side, or both. |
 
 ---
 
@@ -174,11 +173,11 @@ batches are executed and reviewed._
 | Test Data | Valid first/last name and password; Email value 1: `milan.qa@` · Email value 2: `milan.qa.example.com` |
 | Test Steps | 1. Complete the form with Email value 1.<br>2. Click **Register**.<br>3. Record the validation message and page behaviour.<br>4. Replace the email with Email value 2.<br>5. Click **Register** again.<br>6. Record the result. |
 | Expected Result | Both values are rejected as invalid email addresses. The form remains displayed with a clear email validation message. No account is created and no session is started. |
-| Actual Result | _Not executed_ |
-| Status | **Not Run** |
-| Evidence | — |
+| Actual Result | Both values were rejected. **`milan.qa@`** and **`milan.qa.example.com`** each produced the page-level message **"Wrong email"** next to the email field. No redirect occurred and no success message appeared. The message is server-rendered rather than a native browser tooltip, indicating server-side (or unobtrusive client-side) validation. |
+| Status | **Pass** |
+| Evidence | `docs/screenshots/manual/TC-003_invalid-email-1.png`<br>`docs/screenshots/manual/TC-003_invalid-email-2.png` |
 | Linked defect | — |
-| Notes | Two equivalent invalid classes are tested in one case to avoid duplicate case overhead. |
+| Notes | Two equivalent invalid classes are tested in one case to avoid duplicate case overhead. The rendered message is exactly "Wrong email" — automation will assert on that text. |
 
 ---
 
@@ -196,11 +195,11 @@ batches are executed and reviewed._
 | Test Data | Email: `<TEST_EMAIL>` · First name: `Duplicate` · Last name: `Tester` · Password: `<TEST_PASSWORD>` |
 | Test Steps | 1. Open `/register`.<br>2. Complete the form using the existing account email.<br>3. Click **Register**.<br>4. Record the error and check the header for a session. |
 | Expected Result | Registration is refused with a duplicate-email message (expected: an error stating the email already exists). No second account is created and no session is started. |
-| Actual Result | _Not executed_ |
-| Status | **Not Run** |
-| Evidence | — |
+| Actual Result | Registration was refused. The form displayed the banner **"The specified email already exists"** and stayed on the registration page (URL unchanged). No session was created and no second account exists for that address. |
+| Status | **Pass** |
+| Evidence | `docs/screenshots/manual/TC-004_duplicate-email.png` |
 | Linked defect | — |
-| Notes | Verifies assumption A8 (email uniqueness). |
+| Notes | Verifies assumption A8 (email uniqueness) — **confirmed**. |
 
 ---
 
@@ -218,10 +217,11 @@ batches are executed and reviewed._
 | Test Data | Email: a fresh unique address · Password: `<TEST_PASSWORD>` · Confirm password: `DifferentPass!2026` |
 | Test Steps | 1. Complete the form with valid values.<br>2. Enter a different value in **Confirm password**.<br>3. Click **Register**.<br>4. Record the validation message.<br>5. Confirm no session or account was created. |
 | Expected Result | Registration is blocked with a password-mismatch message (expected: "The password and confirmation password do not match."). The form remains on screen. |
-| Actual Result | _Not executed_ |
-| Status | **Not Run** |
-| Evidence | — |
+| Actual Result | Registration was blocked with **"The password and confirmation password do not match."** displayed next to the confirm field. The URL did not change, no success message appeared, and no session was created. A first attempt was discarded because the email field still contained the TC-001 address and produced a duplicate-email error alongside the mismatch; the case was re-executed from a clean form with a new address. |
+| Status | **Pass** |
+| Evidence | `docs/screenshots/manual/TC-005_password-mismatch.png` |
 | Linked defect | — |
+| Notes | The discarded attempt is a test-data issue, not an application defect. Lesson recorded: change one variable at a time and start from a clean form. |
 
 ---
 
@@ -239,11 +239,11 @@ batches are executed and reviewed._
 | Test Data | Email A + password `Ab1!x` (5 characters) · Email B + password `Ab1!xy` (6 characters) |
 | Test Steps | 1. Open `/register`.<br>2. Complete the form using Email A and the 5-character password in both password fields.<br>3. Submit and record the result.<br>4. Repeat with Email B and the 6-character password.<br>5. Record whether registration succeeds. |
 | Expected Result | The 5-character password is rejected with a minimum-length message. The 6-character password is accepted, confirming assumption A1. If the application accepts 5 characters or rejects 6, record the observed rule instead of forcing the assumption. |
-| Actual Result | _Not executed_ |
-| Status | **Not Run** |
-| Evidence | — |
+| Actual Result | Boundary confirmed. The 5-character password (`Ab1!x`) was rejected with **"The password should have at least 6 characters."** The 6-character password (`Ab1!xy`) was accepted and the account was created, showing **"Your registration completed"**. Minimum length is therefore exactly 6 characters. |
+| Status | **Pass** |
+| Evidence | `docs/screenshots/manual/TC-006_password-5chars.png`<br>`docs/screenshots/manual/TC-006_password-6chars.png` |
 | Linked defect | — |
-| Notes | This case validates assumption A1. Its outcome updates the assumptions register and the automation boundary data. |
+| Notes | Assumption A1 is **confirmed**. The 6-character registration created a second demo account (`milan.qa.boundary6.2026@example.com`); this is expected demo noise, not a defect. |
 
 ---
 
@@ -263,10 +263,11 @@ batches are executed and reviewed._
 | Test Data | Email: `<TEST_EMAIL>` · Password: `<TEST_PASSWORD>` |
 | Test Steps | 1. Open `/login`.<br>2. Enter the registered email and correct password.<br>3. Optionally tick **Remember me** — record whether it is ticked.<br>4. Click **Log in**.<br>5. Observe the landing page and header.<br>6. Open `/customer/info`. |
 | Expected Result | Login succeeds. The user is redirected away from the login page, the header shows the account email and a **Log out** link, and `/customer/info` opens instead of redirecting. |
-| Actual Result | _Not executed_ |
-| Status | **Not Run** |
-| Evidence | — |
+| Actual Result | Login succeeded. The user was redirected to the home page (`https://demowebshop.tricentis.com/`) and the header displayed the account email and a **Log out** link. `/customer/info` opened the **My account – Customer info** page with the registered first name, last name, and email. |
+| Status | **Pass** |
+| Evidence | `docs/screenshots/manual/TC-010_login-success.png` |
 | Linked defect | — |
+| Notes | The header also showed **Shopping cart (5)** before any cart case was executed. This is pre-existing session/account cart state, not a defect; the cart must be emptied before the cart batch to establish a known baseline. |
 
 ---
 
@@ -284,9 +285,9 @@ batches are executed and reviewed._
 | Test Data | Email: `<TEST_EMAIL>` · Password: `WrongPass!2026` |
 | Test Steps | 1. Open `/login`.<br>2. Enter the registered email with the wrong password.<br>3. Click **Log in**.<br>4. Record the error message.<br>5. Check the header and open `/customer/info`. |
 | Expected Result | Login fails with a generic credentials error (expected: "Login was unsuccessful. Please correct the errors and try again." and "The credentials provided are incorrect."). No session is created; `/customer/info` redirects to login. |
-| Actual Result | _Not executed_ |
-| Status | **Not Run** |
-| Evidence | — |
+| Actual Result | Login failed. The page displayed **"Login was unsuccessful. Please correct the errors and try again."** and **"The credentials provided are incorrect"**. The email field retained its value, the password field was cleared, and the URL remained `/login`. No authenticated header was shown. |
+| Status | **Pass** |
+| Evidence | `docs/screenshots/manual/TC-011_login-wrong-password.png` |
 | Linked defect | — |
 
 ---
@@ -305,11 +306,11 @@ batches are executed and reviewed._
 | Test Data | Email: `not.registered.qa@example.com` · Password: `AnyPass!2026` |
 | Test Steps | 1. Open `/login`.<br>2. Enter the unregistered email and a password.<br>3. Click **Log in**.<br>4. Compare the message with the message from TC-011. |
 | Expected Result | Login fails. The message does not reveal whether the email exists and should be equivalent to the invalid-password message. No session is created. |
-| Actual Result | _Not executed_ |
-| Status | **Not Run** |
-| Evidence | — |
-| Linked defect | — |
-| Notes | Compare directly against TC-011 evidence rather than relying on memory. |
+| Actual Result | Login failed, but the message **differs from TC-011**: the page displayed **"Login was unsuccessful. Please correct the errors and try again."** and **"No customer account found"**. The URL stayed at `/login`, no session was created, and the behaviour reproduced on a second, different unregistered address (`another.unknown.qa@example.com`). This discloses whether an email is registered. |
+| Status | **Fail** |
+| Evidence | `docs/screenshots/manual/TC-012_login-unregistered-email.png`<br>`docs/screenshots/manual/TC-012_login-unregistered-email-2.png` |
+| Linked defect | **BUG-001** |
+| Notes | User enumeration (CWE-204). Default nopCommerce behaviour, but still a reportable privacy weakness. See `bug-reports.md`. |
 
 ---
 

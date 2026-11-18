@@ -206,14 +206,14 @@ manual case will be automated, and the README will state the real coverage.
 
 | # | Assumption | Affects | Verification |
 |---|---|---|---|
-| A1 | Minimum password length is 6 characters | SC-REG-06 | Attempt 5- and 6-character passwords |
+| A1 | Minimum password length is 6 characters | SC-REG-06 | **Confirmed 18 Nov 2026** — 5 rejected, 6 accepted |
 | A2 | Minimum search term length is 3 characters | SC-SRC-03 | Submit 1-, 2-, and 3-character terms |
 | A3 | Guest checkout is available | SC-CHK-02 | Open checkout with a cart and no session |
 | A4 | Payment methods include Cash On Delivery and Check / Money Order | SC-CHK-07, SC-CHK-08 | Inspect payment step |
 | A5 | Gift card requires recipient name, recipient email, sender name, sender email | SC-PRD-06 | Submit with individual fields empty |
 | A6 | Postal code and phone validation rules exist in checkout | SC-CHK-05 | Submit malformed values |
 | A7 | Guest cart is preserved after login | SC-SES-04 | Add as guest, sign in, inspect cart |
-| A8 | Email uniqueness is enforced at registration | SC-REG-04 | Re-register the test account email |
+| A8 | Email uniqueness is enforced at registration | SC-REG-04 | **Confirmed 18 Nov 2026** — duplicate email rejected |
 
 Verification outcomes will be recorded in `docs/test-cases.md`; any assumption proven
 wrong is corrected here rather than silently ignored.
@@ -235,7 +235,19 @@ wrong is corrected here rather than silently ignored.
 
 ---
 
-## 6. Maintenance
+## 6. Defect traceability
+
+Confirmed defects are traced back to the requirement and test case that exposed them.
+
+| Bug ID | Requirement | Scenario | Test case | Severity | Priority | Status |
+|---|---|---|---|---|---|---|
+| BUG-001 | REQ-AUTH-02 | SC-AUTH-03 | TC-012 | Low | Medium | Open |
+
+Details and evidence: `bug-reports.md`.
+
+---
+
+## 7. Maintenance
 
 This matrix is updated at three points:
 
