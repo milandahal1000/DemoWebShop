@@ -191,7 +191,7 @@ policy or the available payment methods), the scenario is marked **(verify in Ph
 
 | ID | Scenario | Priority | Type |
 |---|---|---|---|
-| SC-SES-01 | Attempt to open account, wishlist, and checkout pages while signed out and confirm each redirects appropriately | High | Session / Authorization |
+| SC-SES-01 | Attempt to open account and order pages while signed out and confirm each redirects appropriately (the wishlist is guest-accessible, so it is checked separately) | High | Session / Authorization |
 | SC-SES-02 | Navigate across multiple pages while signed in and confirm the session remains active | High | Session |
 | SC-SES-03 | After signing out, use the browser Back button and confirm account data is not re-exposed | High | Session / Security-adjacent |
 | SC-SES-04 | Add items as a guest, sign in, and confirm the guest cart is preserved or merged | Medium | Session / Business rule |

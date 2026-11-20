@@ -103,13 +103,13 @@ on exact prices must be re-checked immediately before execution and recorded as 
 | Status | Count |
 |---|---:|
 | Total written | 14 |
-| Passed | 8 |
-| Failed | 1 |
+| Passed | 10 |
+| Failed | 3 |
 | Blocked | 0 |
-| Not Run | 5 |
-| Confirmed defects | 1 |
+| Not Run | 1 |
+| Confirmed defects | 3 |
 
-_Registration batch complete. Authentication in progress: TC-012 failed and is linked to BUG-001 (user enumeration). Remaining authenticated cases must be re-checked against the failed-login behaviour where relevant._
+_Batch 1 nearly complete. Only TC-016 (return URL after login) remains. Fails: TC-012 → BUG-001, TC-013 → BUG-002, TC-017 → BUG-003._
 
 ---
 
@@ -328,11 +328,11 @@ _Registration batch complete. Authentication in progress: TC-012 failed and is l
 | Test Data | Email: empty · Password: empty |
 | Test Steps | 1. Open `/login`.<br>2. Leave both fields empty.<br>3. Click **Log in**.<br>4. Record validation feedback and the page state. |
 | Expected Result | Submission is blocked with validation feedback (e.g. "Email is required." / "Password is required."). No session is created. |
-| Actual Result | _Not executed_ |
-| Status | **Not Run** |
-| Evidence | — |
-| Linked defect | — |
-| Notes | Record whether the browser's native HTML5 validation appears before any server-side message. Both are acceptable; the observation matters. |
+| Actual Result | The form **submitted with both fields empty**. No required-field messages appeared. The page displayed **"Login was unsuccessful. Please correct the errors and try again."** and **"No customer account found"**. The URL did not change and no session was created. The rendered inputs have no `required`/`data-val-required` attributes, confirming there is no client-side required validation. Reproduced 2/2 on clean forms. |
+| Status | **Fail** |
+| Evidence | `docs/screenshots/manual/TC-013_empty-credentials.png` |
+| Linked defect | **BUG-002** |
+| Notes | Record whether the browser's native HTML5 validation appears before any server-side message — in this run it did not, because Email is `type="text"` and no `required` attributes are present. Both client-side and server-side required checks are missing. |
 
 ---
 
@@ -349,11 +349,12 @@ _Registration batch complete. Authentication in progress: TC-012 failed and is l
 | Preconditions | User signed in (TC-010) |
 | Test Data | None |
 | Test Steps | 1. From any page, click **Log out** in the header.<br>2. Observe the landing page and header.<br>3. Open `/customer/info` directly.<br>4. Open `/wishlist` directly. |
-| Expected Result | Logout redirects to the home page and the header changes to **Register** / **Log in**. Both protected URLs redirect to the login page. The account email is no longer displayed. |
-| Actual Result | _Not executed_ |
-| Status | **Not Run** |
-| Evidence | — |
+| Expected Result | Logout redirects to the home page and the header changes to **Register** / **Log in**. The account email is no longer displayed. `/customer/info` redirects to the login page. The wishlist is **guest-accessible by design** and shows an empty guest wishlist, not account data — the original expectation that it would redirect was an incorrect assumption. |
+| Actual Result | Logout returned the user to the home page (`/`). The header displayed **Register**, **Log in**, **Shopping cart(0)**, and **Wishlist(0)** — the account email was gone and the cart counter reset. `/customer/info` redirected to `/login?ReturnUrl=%2fcustomer%2finfo`. `/wishlist` opened the **Wishlist** page with **"The wishlist is empty!"** instead of redirecting, confirming guest wishlist support. |
+| Status | **Pass** |
+| Evidence | `docs/screenshots/manual/TC-014_logout-header.png`<br>`docs/screenshots/manual/TC-014_protected-redirect-1.png`<br>`docs/screenshots/manual/TC-014_protected-redirect-2.png` |
 | Linked defect | — |
+| Notes | Assumption corrected: wishlist is not a protected resource on this store. An unauthenticated request to `/wishlist` also returns the empty guest wishlist. Recorded as assumption A9 in the traceability matrix, not as a defect. |
 
 ---
 
@@ -369,12 +370,13 @@ _Registration batch complete. Authentication in progress: TC-012 failed and is l
 | Automation candidate | Yes |
 | Preconditions | Browser signed out |
 | Test Data | Target URL: `/customer/info` |
-| Test Steps | 1. Enter `https://demowebshop.tricentis.com/customer/info` in the address bar.<br>2. Observe the resulting URL.<br>3. Record whether a `returnUrl` parameter is present.<br>4. Repeat for `/order/history` (or My Account → Orders). |
-| Expected Result | The application redirects to `/login` with a `returnUrl` value pointing at the requested page. The login form is displayed. No account information is exposed. |
-| Actual Result | _Not executed_ |
-| Status | **Not Run** |
-| Evidence | — |
+| Test Steps | 1. Open `https://demowebshop.tricentis.com/customer/info` directly.<br>2. Record the resulting URL, including the `ReturnUrl` value.<br>3. Open `https://demowebshop.tricentis.com/customer/orders` directly.<br>4. Record the resulting URL, including the `ReturnUrl` value.<br>5. Confirm no account data is visible on either page. |
+| Expected Result | Both protected pages redirect to `/login` with a `returnUrl` pointing at the requested page: `/login?ReturnUrl=%2fcustomer%2finfo` and `/login?ReturnUrl=%2Fcustomer%2Forders`. The login form is displayed and no account information is exposed. |
+| Actual Result | `/customer/info` redirected to `/login?ReturnUrl=%2fcustomer%2finfo` and showed the login form, with no account data. `/customer/orders` redirected to `/login?ReturnUrl=%2Fcustomer%2Forders`, also with no account data. Both redirects verified with screenshots. |
+| Status | **Pass** |
+| Evidence | `docs/screenshots/manual/TC-015_customer-info-redirect.png`<br>`docs/screenshots/manual/TC-015_customer-orders-redirect.png` |
 | Linked defect | — |
+| Notes | The original step used `/order/history`, which is **not a route on this store** and returns a 404 (`TC-015_invalid-route-404.png`). That was a test-design error, not an authorization defect. Lesson: confirm the real endpoint before classifying an access-control failure. |
 
 ---
 
@@ -414,11 +416,11 @@ _Registration batch complete. Authentication in progress: TC-012 failed and is l
 | Test Data | Registered: `<TEST_EMAIL>` · Unregistered: `not.registered.qa@example.com` |
 | Test Steps | 1. Open `/passwordrecovery`.<br>2. Submit the registered email.<br>3. Record the confirmation message.<br>4. Return to `/passwordrecovery` and submit the unregistered email.<br>5. Compare both messages.<br>6. Do **not** click any emailed reset link (email delivery is out of scope). |
 | Expected Result | Both submissions produce an equivalent neutral confirmation (expected: a message stating that email instructions have been sent). The response does not reveal whether the account exists. No error page is shown. |
-| Actual Result | _Not executed_ |
-| Status | **Not Run** |
-| Evidence | — |
-| Linked defect | — |
-| Notes | Email delivery is explicitly out of scope; only the on-screen response is verified. |
+| Actual Result | The responses differ. The registered email produced **"Email with instructions has been sent to you."** The unregistered email produced **"Email not found."** Both stayed on `/passwordrecovery`; the differing messages disclose whether an address is registered. |
+| Status | **Fail** |
+| Evidence | `docs/screenshots/manual/TC-017_registered-email.png`<br>`docs/screenshots/manual/TC-017_unregistered-email.png` |
+| Linked defect | **BUG-003** |
+| Notes | Same user-enumeration class as BUG-001 but a different endpoint, so it is tracked separately. Email delivery itself remains out of scope. |
 
 ---
 

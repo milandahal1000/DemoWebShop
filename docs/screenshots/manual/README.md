@@ -41,3 +41,13 @@ TC-015_protected-redirect.png
 | TC-011 | `TC-011_login-wrong-password.png` | 18 Nov 2026 |
 | TC-012 | `TC-012_login-unregistered-email.png` | 18 Nov 2026 |
 | TC-012 | `TC-012_login-unregistered-email-2.png` | 18 Nov 2026 |
+| TC-013 | `TC-013_empty-credentials.png` | 18 Nov 2026 |
+| TC-013 | `TC-013_empty-credentials-2.png` | 18 Nov 2026 |
+| TC-014 | `TC-014_logout-header.png` | 18 Nov 2026 |
+| TC-014 | `TC-014_protected-redirect-1.png` | 18 Nov 2026 |
+| TC-014 | `TC-014_protected-redirect-2.png` | 18 Nov 2026 |
+| TC-015 | `TC-015_customer-info-redirect.png` | 20 Nov 2026 |
+| TC-015 | `TC-015_customer-orders-redirect.png` | 20 Nov 2026 |
+| TC-015 | `TC-015_invalid-route-404.png` | 20 Nov 2026 (test-design evidence) |
+| TC-017 | `TC-017_registered-email.png` | 20 Nov 2026 |
+| TC-017 | `TC-017_unregistered-email.png` | 20 Nov 2026 |

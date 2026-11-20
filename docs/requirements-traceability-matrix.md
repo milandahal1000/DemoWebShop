@@ -214,6 +214,7 @@ manual case will be automated, and the README will state the real coverage.
 | A6 | Postal code and phone validation rules exist in checkout | SC-CHK-05 | Submit malformed values |
 | A7 | Guest cart is preserved after login | SC-SES-04 | Add as guest, sign in, inspect cart |
 | A8 | Email uniqueness is enforced at registration | SC-REG-04 | **Confirmed 18 Nov 2026** — duplicate email rejected |
+| A9 | The wishlist requires authentication | SC-SES-01, TC-014 | **Rejected 18 Nov 2026** — guest wishlist is accessible and shows an empty list; not a defect |
 
 Verification outcomes will be recorded in `docs/test-cases.md`; any assumption proven
 wrong is corrected here rather than silently ignored.
@@ -242,6 +243,8 @@ Confirmed defects are traced back to the requirement and test case that exposed 
 | Bug ID | Requirement | Scenario | Test case | Severity | Priority | Status |
 |---|---|---|---|---|---|---|
 | BUG-001 | REQ-AUTH-02 | SC-AUTH-03 | TC-012 | Low | Medium | Open |
+| BUG-002 | REQ-AUTH-03 | SC-AUTH-04 | TC-013 | Low | Low | Open |
+| BUG-003 | REQ-AUTH-06 | SC-AUTH-08 | TC-017 | Low | Medium | Open |
 
 Details and evidence: `bug-reports.md`.
 
