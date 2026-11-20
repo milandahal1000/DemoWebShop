@@ -82,21 +82,21 @@ final results are added in Phase 9. No result is marked as executed in this docu
 
 | REQ ID | Derived requirement (assumption) | Scenario(s) | Manual TCs (planned) | Automation |
 |---|---|---|---|---|
-| REQ-PRD-01 | A product page displays name, image, price, availability, description, and quantity input | SC-PRD-01 | TC-030–TC-035 | Yes |
-| REQ-PRD-02 | Discounted products display old price, current price, and a consistent discount | SC-PRD-02 | TC-030–TC-035 | Yes |
-| REQ-PRD-03 | Configurable products expose dropdown/radio/checkbox attributes whose selection changes the price | SC-PRD-03, SC-PRD-04, SC-PRD-05 | TC-030–TC-035 | Yes |
-| REQ-PRD-04 | Gift cards require recipient and sender details before being added to the cart **(exact required set to verify)** | SC-PRD-06 | TC-030–TC-035 | Partial |
-| REQ-PRD-05 | Digital download products expose a sample link and can be added to the cart | SC-PRD-07 | TC-030–TC-035 | Partial |
-| REQ-PRD-06 | Adding from the product page updates the header cart counter and cart contents | SC-PRD-08 | TC-030–TC-035 | Yes |
+| REQ-PRD-01 | A product page displays name, image, price, availability, description, and quantity input | SC-PRD-01 | TC-030–TC-036 | Yes |
+| REQ-PRD-02 | Discounted products display old price, current price, and a consistent discount | SC-PRD-02 | TC-030–TC-036 | Yes |
+| REQ-PRD-03 | Configurable products expose dropdown/radio/checkbox attributes whose selection changes the price | SC-PRD-03, SC-PRD-04, SC-PRD-05 | TC-030–TC-036 | Yes |
+| REQ-PRD-04 | Gift cards require recipient and sender details before being added to the cart **(exact required set to verify)** | SC-PRD-06 | TC-030–TC-036 | Partial |
+| REQ-PRD-05 | Digital download products expose a sample link and can be added to the cart | SC-PRD-07 | TC-030–TC-036 | Partial |
+| REQ-PRD-06 | Adding from the product page updates the header cart counter and cart contents | SC-PRD-08 | TC-030–TC-036 | Yes |
 
 ### 2.5 Search
 
 | REQ ID | Derived requirement (assumption) | Scenario(s) | Manual TCs (planned) | Automation |
 |---|---|---|---|---|
-| REQ-SRC-01 | Keyword search returns relevant product results with a result count, case-insensitively | SC-SRC-01, SC-SRC-04, SC-SRC-06 | TC-040–TC-043 | Yes |
-| REQ-SRC-02 | A search with no matches displays an explicit no-results message | SC-SRC-02 | TC-040–TC-043 | Yes |
-| REQ-SRC-03 | Search terms shorter than the minimum length are rejected with a message **(threshold assumed 3 — verify)** | SC-SRC-03 | TC-040–TC-043 | Partial |
-| REQ-SRC-04 | Special characters in the search term are handled without error or broken layout | SC-SRC-05 | TC-040–TC-043 | Yes |
+| REQ-SRC-01 | Keyword search returns relevant product results with a result count, case-insensitively | SC-SRC-01, SC-SRC-04, SC-SRC-06 | TC-040–TC-045 | Yes |
+| REQ-SRC-02 | A search with no matches displays an explicit no-results message | SC-SRC-02 | TC-040–TC-045 | Yes |
+| REQ-SRC-03 | Search terms shorter than the minimum length are rejected with a message **(threshold assumed 3 — verify)** | SC-SRC-03 | TC-040–TC-045 | Partial |
+| REQ-SRC-04 | Special characters in the search term are handled without error or broken layout | SC-SRC-05 | TC-040–TC-045 | Yes |
 
 ### 2.6 Sorting, filtering, and paging
 
@@ -183,8 +183,8 @@ final results are added in Phase 9. No result is marked as executed in this docu
 | Registration | 6 | 6 | 6 | 2 |
 | Authentication | 6 | 8 | 8 | 5 |
 | Catalog / navigation | 4 | 6 | 4 | 2 |
-| Product detail | 6 | 8 | 6 | 4 |
-| Search | 4 | 6 | 4 | 3 |
+| Product detail | 6 | 8 | 7 | 4 |
+| Search | 4 | 6 | 6 | 3 |
 | Sort / filter / paging | 4 | 10 | 6 | 4 |
 | Shopping cart | 7 | 12 | 8 | 8 |
 | Checkout | 10 | 10 | 9 | 6 |
@@ -193,7 +193,7 @@ final results are added in Phase 9. No result is marked as executed in this docu
 | My account | 4 | 7 | 5 | 2 |
 | Contact / newsletter | 2 | 5 | 4 | 2 |
 | Session / edge | 3 | 4 | 3 | 1 |
-| **Total** | **62** | **91** | **70** | **43** |
+| **Total** | **62** | **91** | **73** | **43** |
 
 Planned manual cases are fewer than scenarios because data variations (for example
 quantity 0 / negative / non-numeric / large) are consolidated into single cases with

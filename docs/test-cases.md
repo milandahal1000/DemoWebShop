@@ -84,9 +84,9 @@ on exact prices must be re-checked immediately before execution and recorded as 
 |---|---|---|
 | Registration | TC-001 – TC-006 | Written (Batch 1) |
 | Authentication / password recovery | TC-010 – TC-017 | Written (Batch 1) |
-| Catalog / navigation | TC-020 – TC-023 | Pending Batch 2 |
-| Product detail | TC-030 – TC-035 | Pending Batch 2 |
-| Search | TC-040 – TC-043 | Pending Batch 2 |
+| Catalog / navigation | TC-020 – TC-023 | Written (Batch 2) |
+| Product detail | TC-030 – TC-036 | Written (Batch 2) |
+| Search | TC-040 – TC-045 | Written (Batch 2) |
 | Sort / filter / paging | TC-050 – TC-055 | Pending Batch 3 |
 | Cart | TC-060 – TC-067 | Pending Batch 3 |
 | Checkout | TC-080 – TC-088 | Pending Batch 4 |
@@ -102,14 +102,15 @@ on exact prices must be re-checked immediately before execution and recorded as 
 
 | Status | Count |
 |---|---:|
-| Total written | 14 |
+| Total written | 31 |
 | Passed | 11 |
 | Failed | 3 |
 | Blocked | 0 |
-| Not Run | 0 |
+| Not Run | 17 |
 | Confirmed defects | 3 |
 
-**Batch 1 complete.** All 14 cases executed: 11 passed, 3 failed, 0 blocked. Failures: TC-012 → BUG-001, TC-013 → BUG-002, TC-017 → BUG-003. No Critical or High severity defects found.
+**Batch 1 complete:** 14 executed — 11 passed, 3 failed, 0 blocked (TC-012 → BUG-001, TC-013 → BUG-002, TC-017 → BUG-003). No Critical or High severity defects.
+**Batch 2 written:** 17 cases (catalog, product detail, search) awaiting execution.
 
 ---
 
@@ -424,7 +425,380 @@ on exact prices must be re-checked immediately before execution and recorded as 
 
 ---
 
-## 7. Manual execution protocol
+## 7. Batch 2 — Catalog and navigation
+
+> **Baseline note:** the test account's cart currently contains items from earlier
+> sessions. For any case that asserts cart counts, record the count before the action and
+> assert the *change*, not an absolute value.
+
+### TC-020 — Home page core elements
+
+| Field | Value |
+|---|---|
+| Test Case ID | TC-020 |
+| Module | Catalog / navigation |
+| Related scenario | SC-CAT-01 |
+| Test Case Title | Home page renders navigation, featured products, and footer |
+| Priority | High |
+| Automation candidate | Yes |
+| Preconditions | Store reachable |
+| Test Data | Base URL `/` |
+| Test Steps | 1. Open the home page.<br>2. Check the header: logo, Register/Log in (or account), cart, wishlist, search box.<br>3. Check the main navigation lists the seven categories.<br>4. Check the **Featured products** section shows products with names and prices.<br>5. Check breadcrumb/slider/newsletter/footer areas render.<br>6. Note any broken image or missing section. |
+| Expected Result | Header, seven category links, featured products with prices, newsletter block, and footer information links all render. No broken images or error text. |
+| Actual Result | _Not executed_ |
+| Status | **Not Run** |
+| Evidence | — |
+| Linked defect | — |
+
+---
+
+### TC-021 — All seven top-level categories open listings
+
+| Field | Value |
+|---|---|
+| Test Case ID | TC-021 |
+| Module | Catalog / navigation |
+| Related scenario | SC-CAT-02 |
+| Test Case Title | Each top-level category displays its own product listing |
+| Priority | High |
+| Automation candidate | Yes |
+| Preconditions | Store reachable |
+| Test Data | `/books`, `/computers`, `/electronics`, `/apparel-shoes`, `/digital-downloads`, `/jewelry`, `/gift-cards` |
+| Test Steps | 1. Open each URL in turn.<br>2. For each, record the page heading.<br>3. Confirm at least one product is listed.<br>4. Confirm the heading matches the category name.<br>5. Note any empty or mismatched listing. |
+| Expected Result | All seven categories load with a matching heading and at least one product. No 404 or error page. |
+| Actual Result | _Not executed_ |
+| Status | **Not Run** |
+| Evidence | — |
+| Linked defect | — |
+
+---
+
+### TC-022 — Computers sub-categories
+
+| Field | Value |
+|---|---|
+| Test Case ID | TC-022 |
+| Module | Catalog / navigation |
+| Related scenario | SC-CAT-03 |
+| Test Case Title | Computers sub-categories open correct listings |
+| Priority | High |
+| Automation candidate | Yes |
+| Preconditions | Store reachable |
+| Test Data | `/desktops`, `/notebooks`, `/accessories` |
+| Test Steps | 1. Open `/computers`.<br>2. Confirm the sub-category links are present.<br>3. Open each sub-category.<br>4. Record heading, product count, and breadcrumb. |
+| Expected Result | Each sub-category opens its own listing with a matching heading and breadcrumb `Home / Computers / <sub-category>`. |
+| Actual Result | _Not executed_ |
+| Status | **Not Run** |
+| Evidence | — |
+| Linked defect | — |
+
+---
+
+### TC-023 — Breadcrumb navigation
+
+| Field | Value |
+|---|---|
+| Test Case ID | TC-023 |
+| Module | Catalog / navigation |
+| Related scenario | SC-CAT-04 |
+| Test Case Title | Breadcrumbs reflect hierarchy and navigate correctly |
+| Priority | Medium |
+| Automation candidate | Partial |
+| Preconditions | Store reachable |
+| Test Data | `/books`, a product page under Books |
+| Test Steps | 1. Open `/books` and record the breadcrumb.<br>2. Click the **Home** breadcrumb link.<br>3. Confirm the home page loads.<br>4. Return to `/books`, open a product, and record the product breadcrumb.<br>5. Click the category breadcrumb link. |
+| Expected Result | Breadcrumb reads `Home / Books` on the listing and `Home / Books / <product>` on the product page. Links navigate to the correct parent page. |
+| Actual Result | _Not executed_ |
+| Status | **Not Run** |
+| Evidence | — |
+| Linked defect | — |
+
+---
+
+## 8. Batch 2 — Product detail
+
+### TC-030 — Simple product details
+
+| Field | Value |
+|---|---|
+| Test Case ID | TC-030 |
+| Module | Product detail |
+| Related scenario | SC-PRD-01 |
+| Test Case Title | Simple product page displays complete product information |
+| Priority | High |
+| Automation candidate | Yes |
+| Preconditions | Store reachable |
+| Test Data | `/141-inch-laptop` |
+| Test Steps | 1. Open the product page.<br>2. Record the product name, image, price, and availability text.<br>3. Confirm a description is present.<br>4. Confirm the quantity field defaults to 1.<br>5. Confirm **Add to cart** is visible. |
+| Expected Result | Name **14.1-inch Laptop**, price **1590.00**, availability **In stock**, a description, qty **1**, and an enabled add-to-cart button. Values match the listing page. |
+| Actual Result | _Not executed_ |
+| Status | **Not Run** |
+| Evidence | — |
+| Linked defect | — |
+| Notes | Prices on the shared demo can change; record the observed price and compare it with the listing rather than a fixed value. |
+
+---
+
+### TC-031 — Discounted product price display
+
+| Field | Value |
+|---|---|
+| Test Case ID | TC-031 |
+| Module | Product detail |
+| Related scenario | SC-PRD-02 |
+| Test Case Title | Discounted product shows old price and current price consistently |
+| Priority | Medium |
+| Automation candidate | Yes |
+| Preconditions | Store reachable |
+| Test Data | `/computing-and-internet` |
+| Test Steps | 1. Open the product page.<br>2. Record the old price and the current price.<br>3. Confirm the current price is lower than the old price.<br>4. Compare both values with the price shown on the Books listing. |
+| Expected Result | Old price **30.00** and current price **10.00** are both displayed, the current price is lower, and the listing shows the same current price. |
+| Actual Result | _Not executed_ |
+| Status | **Not Run** |
+| Evidence | — |
+| Linked defect | — |
+
+---
+
+### TC-032 — Configurable product default selections
+
+| Field | Value |
+|---|---|
+| Test Case ID | TC-032 |
+| Module | Product detail |
+| Related scenario | SC-PRD-03 |
+| Test Case Title | Configurable product loads with valid default selections and price |
+| Priority | High |
+| Automation candidate | Yes |
+| Preconditions | Store reachable |
+| Test Data | `/build-your-own-computer` |
+| Test Steps | 1. Open the product page.<br>2. Record the selected processor, RAM, HDD, and software options.<br>3. Record the displayed price.<br>4. Confirm every attribute group has a valid selection and no blank required field. |
+| Expected Result | The page loads with **2.5 GHz Intel Pentium Dual-Core E2200** selected, one HDD radio selected, the default software checkbox state, and a displayed price of **1200.00**. No attribute group is left unselected. |
+| Actual Result | _Not executed_ |
+| Status | **Not Run** |
+| Evidence | — |
+| Linked defect | — |
+| Notes | Record the exact default labels and price; the demo's option configuration can change. |
+
+---
+
+### TC-033 — Configurable attribute changes update price
+
+| Field | Value |
+|---|---|
+| Test Case ID | TC-033 |
+| Module | Product detail |
+| Related scenario | SC-PRD-04 |
+| Test Case Title | Changing configurable options recalculates the product price |
+| Priority | High |
+| Automation candidate | Yes |
+| Preconditions | TC-032 executed; product page open |
+| Test Data | Processor: 2.2 GHz (no surcharge) · RAM: 4GB [+20.00] · Software checkbox toggled |
+| Test Steps | 1. Record the price with defaults.<br>2. Change the processor to the 2.2 GHz option and record the price.<br>3. Change RAM to 4GB and record the price.<br>4. Toggle a software checkbox and record the price.<br>5. Compare each change with the option surcharge shown in the label. |
+| Expected Result | The displayed price updates after each attribute change and equals the base price plus the selected attribute surcharges. Selecting a cheaper processor reduces the price; adding RAM/software increases it. |
+| Actual Result | _Not executed_ |
+| Status | **Not Run** |
+| Evidence | — |
+| Linked defect | — |
+| Notes | Record whether the price updates immediately or after an explicit action. This determines the automation wait strategy. |
+
+---
+
+### TC-034 — Configurable product added to cart with quantity
+
+| Field | Value |
+|---|---|
+| Test Case ID | TC-034 |
+| Module | Product detail |
+| Related scenario | SC-PRD-05, SC-PRD-08 |
+| Test Case Title | Configurable product and quantity are reflected correctly in the cart |
+| Priority | High |
+| Automation candidate | Yes |
+| Preconditions | TC-032 executed; note current cart count |
+| Test Data | Processor: 2.5 GHz · RAM: 8GB [+60.00] · HDD: default · Qty: 2 |
+| Test Steps | 1. Configure the product as above.<br>2. Set quantity to 2.<br>3. Click **Add to cart**.<br>4. Confirm the header cart counter increases by 2.<br>5. Open the cart and record the line description, unit price, quantity, and line total. |
+| Expected Result | The cart shows **Build your own computer** with the chosen options listed, quantity **2**, unit price equal to the configured price, and line total equal to unit price × 2. |
+| Actual Result | _Not executed_ |
+| Status | **Not Run** |
+| Evidence | — |
+| Linked defect | — |
+
+---
+
+### TC-035 — Gift card requires recipient and sender details
+
+| Field | Value |
+|---|---|
+| Test Case ID | TC-035 |
+| Module | Product detail |
+| Related scenario | SC-PRD-06 |
+| Test Case Title | Gift card cannot be added without recipient and sender details |
+| Priority | High |
+| Automation candidate | Partial |
+| Preconditions | Store reachable; note current cart count |
+| Test Data | `/25-virtual-gift-card` with Recipient name, Recipient email, Sender name, Sender email left empty |
+| Test Steps | 1. Open the gift card product page.<br>2. Leave all gift-card detail fields empty.<br>3. Leave quantity at 1.<br>4. Click **Add to cart**.<br>5. Record every validation message.<br>6. Confirm the cart counter did not change. |
+| Expected Result | Adding is blocked with required-field messages for the empty gift-card fields (expected set: recipient name, recipient email, sender name, sender email). The product is not added to the cart. |
+| Actual Result | _Not executed_ |
+| Status | **Not Run** |
+| Evidence | — |
+| Linked defect | — |
+| Notes | Verifies assumption A5 — record exactly which fields are required. |
+
+---
+
+### TC-036 — Digital download product and cart counter
+
+| Field | Value |
+|---|---|
+| Test Case ID | TC-036 |
+| Module | Product detail |
+| Related scenario | SC-PRD-07, SC-PRD-08 |
+| Test Case Title | Digital download exposes a sample and can be added to the cart |
+| Priority | Medium |
+| Automation candidate | Partial |
+| Preconditions | Store reachable; note current cart count |
+| Test Data | `/music-2`, quantity 1 |
+| Test Steps | 1. Open the product page.<br>2. Confirm the price and **Download sample** link.<br>3. Click the sample link and confirm a download starts or a sample page opens.<br>4. Return to the product and click **Add to cart**.<br>5. Confirm the header cart counter increments by 1 and the flyout shows **Music 2**. |
+| Expected Result | The digital download shows price **3.00** and a working sample link. Adding it increments the cart counter by 1 and displays the product in the cart flyout. |
+| Actual Result | _Not executed_ |
+| Status | **Not Run** |
+| Evidence | — |
+| Linked defect | — |
+
+---
+
+## 9. Batch 2 — Search
+
+### TC-040 — Search returns relevant results
+
+| Field | Value |
+|---|---|
+| Test Case ID | TC-040 |
+| Module | Search |
+| Related scenario | SC-SRC-01 |
+| Test Case Title | A valid keyword returns matching products and a result count |
+| Priority | High |
+| Automation candidate | Yes |
+| Preconditions | Store reachable |
+| Test Data | Keyword `computer` |
+| Test Steps | 1. Enter `computer` in the header search box.<br>2. Submit the search.<br>3. Record the result count and the product names shown.<br>4. Confirm every result is plausibly related to the keyword. |
+| Expected Result | The search results page lists matching products (including computer products) with a result count. No error or blank page. |
+| Actual Result | _Not executed_ |
+| Status | **Not Run** |
+| Evidence | — |
+| Linked defect | — |
+
+---
+
+### TC-041 — Search with no matches
+
+| Field | Value |
+|---|---|
+| Test Case ID | TC-041 |
+| Module | Search |
+| Related scenario | SC-SRC-02 |
+| Test Case Title | A keyword with no matches shows the no-results message |
+| Priority | High |
+| Automation candidate | Yes |
+| Preconditions | Store reachable |
+| Test Data | Keyword `zzzznotfound` |
+| Test Steps | 1. Search for `zzzznotfound`.<br>2. Record the message and whether a product grid is shown. |
+| Expected Result | The page displays **"No products were found that matched your criteria."** and no product grid or error page. |
+| Actual Result | _Not executed_ |
+| Status | **Not Run** |
+| Evidence | — |
+| Linked defect | — |
+
+---
+
+### TC-042 — Search term shorter than the minimum length
+
+| Field | Value |
+|---|---|
+| Test Case ID | TC-042 |
+| Module | Search |
+| Related scenario | SC-SRC-03 |
+| Test Case Title | Search enforces a three-character minimum |
+| Priority | Medium |
+| Automation candidate | Partial |
+| Preconditions | Store reachable |
+| Test Data | Keyword `ab` (2 characters) |
+| Test Steps | 1. Search for `ab`.<br>2. Record the message.<br>3. Repeat with `abc` (3 characters) and confirm the search executes. |
+| Expected Result | `ab` is rejected with **"Search term minimum length is 3 characters"**. `abc` executes and returns a results page. This confirms assumption A2. |
+| Actual Result | _Not executed_ |
+| Status | **Not Run** |
+| Evidence | — |
+| Linked defect | — |
+| Notes | Assumption A2 (minimum 3) verified during preparation by an unauthenticated request; still confirm in the browser. |
+
+---
+
+### TC-043 — Search is case-insensitive
+
+| Field | Value |
+|---|---|
+| Test Case ID | TC-043 |
+| Module | Search |
+| Related scenario | SC-SRC-01 |
+| Test Case Title | Search results are the same regardless of letter casing |
+| Priority | Medium |
+| Automation candidate | Yes |
+| Preconditions | Store reachable |
+| Test Data | Keywords `computer`, `COMPUTER`, `Computer` |
+| Test Steps | 1. Search for `computer` and record the result count and names.<br>2. Repeat for `COMPUTER`.<br>3. Repeat for `Computer`.<br>4. Compare the three result sets. |
+| Expected Result | All three searches return the same products and count. |
+| Actual Result | _Not executed_ |
+| Status | **Not Run** |
+| Evidence | — |
+| Linked defect | — |
+
+---
+
+### TC-044 — Search with special characters
+
+| Field | Value |
+|---|---|
+| Test Case ID | TC-044 |
+| Module | Search |
+| Related scenario | SC-SRC-04 |
+| Test Case Title | Special characters are handled without script execution or errors |
+| Priority | Low |
+| Automation candidate | Yes |
+| Preconditions | Store reachable |
+| Test Data | `<script>alert(1)</script>`, `%`, `'`, `--` |
+| Test Steps | 1. Search for `<script>alert(1)</script>`.<br>2. Confirm no alert dialog appears and the term is rendered as text or safely escaped.<br>3. Repeat for `%`, `'`, and `--`.<br>4. Confirm each returns a normal results/no-results page. |
+| Expected Result | No script executes, no server error page appears, and each term produces a handled results page. The literal characters are safely escaped if echoed. |
+| Actual Result | _Not executed_ |
+| Status | **Not Run** |
+| Evidence | — |
+| Linked defect | — |
+| Notes | Functional robustness check only; this is not a security audit. |
+
+---
+
+### TC-045 — Header search from an inner page
+
+| Field | Value |
+|---|---|
+| Test Case ID | TC-045 |
+| Module | Search |
+| Related scenario | SC-SRC-01 |
+| Test Case Title | Header search works from a category page |
+| Priority | Medium |
+| Automation candidate | Yes |
+| Preconditions | Store reachable |
+| Test Data | Start on `/books`; keyword `laptop` |
+| Test Steps | 1. Open `/books`.<br>2. Type `laptop` in the header search box.<br>3. Submit.<br>4. Record the resulting URL, count, and products. |
+| Expected Result | The search executes from the inner page and displays results for `laptop` (for example the 14.1-inch Laptop) without navigating to an error page. |
+| Actual Result | _Not executed_ |
+| Status | **Not Run** |
+| Evidence | — |
+| Linked defect | — |
+
+---
+
+## 10. Manual execution protocol
 
 For every case:
 
@@ -444,7 +818,7 @@ For every case:
 | Batch | Cases | Focus |
 |---|---|---|
 | 1 | TC-001 – TC-006, TC-010 – TC-017 | Registration and authentication (this document) |
-| 2 | TC-020 – TC-023, TC-030 – TC-035, TC-040 – TC-043 | Catalog, product detail, search |
+| 2 | TC-020 – TC-023, TC-030 – TC-036, TC-040 – TC-045 | Catalog, product detail, search |
 | 3 | TC-050 – TC-055, TC-060 – TC-067 | Sorting/filtering, cart |
 | 4 | TC-080 – TC-088, TC-090 – TC-092 | Checkout and orders |
 | 5 | TC-100 – TC-103, TC-110 – TC-114, TC-120 – TC-123, TC-130 – TC-132 | Wishlist, account, contact, session |
