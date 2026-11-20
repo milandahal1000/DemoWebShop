@@ -103,13 +103,13 @@ on exact prices must be re-checked immediately before execution and recorded as 
 | Status | Count |
 |---|---:|
 | Total written | 14 |
-| Passed | 10 |
+| Passed | 11 |
 | Failed | 3 |
 | Blocked | 0 |
-| Not Run | 1 |
+| Not Run | 0 |
 | Confirmed defects | 3 |
 
-_Batch 1 nearly complete. Only TC-016 (return URL after login) remains. Fails: TC-012 → BUG-001, TC-013 → BUG-002, TC-017 → BUG-003._
+**Batch 1 complete.** All 14 cases executed: 11 passed, 3 failed, 0 blocked. Failures: TC-012 → BUG-001, TC-013 → BUG-002, TC-017 → BUG-003. No Critical or High severity defects found.
 
 ---
 
@@ -394,11 +394,11 @@ _Batch 1 nearly complete. Only TC-016 (return URL after login) remains. Fails: T
 | Test Data | Email: `<TEST_EMAIL>` · Password: `<TEST_PASSWORD>` |
 | Test Steps | 1. Starting from the redirected login page in TC-015, sign in with valid credentials.<br>2. Observe the landing page.<br>3. Confirm the header shows an authenticated session. |
 | Expected Result | After login, the user lands on the originally requested page (`/customer/info`) rather than the home page, and the page is fully rendered for the authenticated user. |
-| Actual Result | _Not executed_ |
-| Status | **Not Run** |
-| Evidence | — |
+| Actual Result | After signing in from the redirected login page, the user landed on `https://demowebshop.tricentis.com/customer/orders`, showing **My account – Orders** with "No orders" and an authenticated header. The return URL was honoured. |
+| Status | **Pass** |
+| Evidence | `docs/screenshots/manual/TC-016_return-url.png` |
 | Linked defect | — |
-| Notes | Depends on TC-015; the dependency is documented and deliberate. |
+| Notes | Depends on TC-015; the dependency is documented and deliberate. The header again showed **Shopping cart (5)**, confirming the cart is persisted server-side for this account. |
 
 ---
 
