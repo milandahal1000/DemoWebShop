@@ -9,7 +9,7 @@ venv/
 # Local secrets and environment configuration
 .env
 .env.*
-!.env.example
+.env.example
 
 # Generated test output (final evidenced artifacts are copied to docs/)
 reports/
@@ -23,3 +23,5 @@ Thumbs.db
 # Logs and temporary files
 *.log
 *.tmp
+
+#  opencode -s ses_e11d6912cffey1lb55MwN8Q7zk
