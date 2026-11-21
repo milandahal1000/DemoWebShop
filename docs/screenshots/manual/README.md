@@ -52,3 +52,11 @@ TC-015_protected-redirect.png
 | TC-017 | `TC-017_registered-email.png` | 20 Nov 2026 |
 | TC-017 | `TC-017_unregistered-email.png` | 20 Nov 2026 |
 | TC-016 | `TC-016_return-url.png` | 20 Nov 2026 |
+| TC-020 | `TC-020_home-page.png` | 21 Nov 2026 |
+| TC-022 | `TC-022_computers-subcategory.png` | 21 Nov 2026 |
+| TC-023 | `TC-023_breadcrumb.png` | 21 Nov 2026 |
+| TC-020 | `TC-020_home-featured.png` | 21 Nov 2026 |
+| TC-030 | `TC-030_laptop-detail.png` | 21 Nov 2026 |
+| TC-032 | `TC-032_configurable-defaults.png` | 21 Nov 2026 |
+| TC-033 | `TC-033_price-after-changes.png` | 21 Nov 2026 |
+| TC-034 | `TC-034_cart-configurable.png` | 21 Nov 2026 |

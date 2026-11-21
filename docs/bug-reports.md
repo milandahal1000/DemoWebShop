@@ -23,11 +23,12 @@ Severity and priority definitions are in `test-plan.md`, Section 13.
 | BUG-001 | Login reveals whether an email address is registered | Authentication | Low | Medium | Always (2/2) | Open |
 | BUG-002 | Login accepts empty credentials without required-field validation | Authentication | Low | Low | Always (1/1 + DOM) | Open |
 | BUG-003 | Password recovery reveals whether an email address is registered | Password recovery | Low | Medium | Always (1/1) | Open |
+| BUG-004 | Configurable product page shows only the base price, excluding selected option surcharges | Product detail | Low | Medium | Always (4/4 + cart) | Open |
 
 | Metric | Count |
 |---|---:|
-| Confirmed defects | 3 |
-| Open | 3 |
+| Confirmed defects | 4 |
+| Open | 4 |
 | Retest passed / closed | 0 |
 
 ---
@@ -180,6 +181,52 @@ weakness. Email delivery is not verified; only the on-screen response is in scop
 
 ---
 
+### BUG-004 — Configurable product page shows only the base price
+
+| Field | Value |
+|---|---|
+| Bug ID | BUG-004 |
+| Bug title | Product page for a configurable product does not include attribute surcharges in the displayed price |
+| Module | Product detail / pricing |
+| Environment | Public demo `https://demowebshop.tricentis.com/` · Brave 1.99.57 (Chromium 157) · CachyOS Linux · 21 Nov 2026 |
+| Preconditions | `/build-your-own-computer` open; user signed in or out (price display is the same) |
+| Steps to reproduce | 1. Open `https://demowebshop.tricentis.com/build-your-own-computer` and record the price.<br>2. Change the processor to **2.2 GHz** and record the price.<br>3. Change RAM to **4GB [+20.00]** and record the price.<br>4. Tick **Acrobat Reader [+10.00]** and record the price.<br>5. Configure 2.5 GHz + 8GB + Microsoft Office, set quantity 2, and add to cart.<br>6. Open the cart and compare the unit price with the price shown on the product page. |
+| Expected result | The displayed price reflects the current selection: **1265.00** with the defaults (1200 + 15 + 50), **1280.00** after the changes in steps 2–4, and **1325.00** for the configuration added in step 5. Alternatively, if the figure is intentionally a starting price, it should be labelled as such ("from 1200.00"). |
+| Actual result | The product page stays at **1200.00** for every configuration, with no recalculation and no request when attributes change. The cart correctly charges **1325.00** (1200 + 15 + 60 + 50) for the configuration added in step 5. The displayed price therefore differs from the amount the customer will be charged, and it also omits the surcharges that are selected by default. |
+| Severity | Low |
+| Priority | Medium |
+| Reproducibility | Always — four price readings across three configurations, plus a cart comparison |
+| Evidence | `docs/screenshots/manual/TC-032_configurable-defaults.png`<br>`docs/screenshots/manual/TC-033_price-after-changes.png`<br>`docs/screenshots/manual/TC-034_cart-configurable.png` |
+| Status | Open |
+| Related items | Requirement `REQ-PRD-03` · Scenario `SC-PRD-04` · Test cases `TC-033`, `TC-034` |
+
+#### Impact
+
+A customer configuring the product sees a price that is lower than the price they will be
+charged. No money is taken without disclosure — the cart shows the correct unit price
+before checkout — so severity is Low. The commercial impact is reduced price
+transparency and possible abandonment at the cart step.
+
+#### Root-cause hypothesis
+
+The stock nopCommerce theme renders the server-calculated base product price. The
+product-details page in this theme contains no client-side price recalculation and no
+attribute-change endpoint, so attribute surcharges only exist in the cart calculation.
+
+#### Recommendation
+
+Either recalculate the price when an attribute changes (client-side from the option
+surcharges, or through an attribute-change endpoint), or explicitly label the figure as
+"from 1200.00" so it cannot be mistaken for the final configured price.
+
+#### Notes
+
+Likely standard behaviour of the stock theme rather than a regression, but still
+reportable because the displayed and charged prices differ. Automated tests must assert
+the cart price, never the product-page price, for configurable products.
+
+---
+
 ## 3. Defects deliberately not raised
 
 | Observation | Why it is not a defect |
@@ -189,6 +236,7 @@ weakness. Email delivery is not verified; only the on-screen response is in scop
 | First TC-005 attempt showed a duplicate-email error as well as the mismatch | Test data error: the form retained the previous email |
 | `/order/history` returns a 404 | Invalid route, not a broken access control. The real endpoint is `/customer/orders`, which redirects to login correctly |
 | Demo slowness / occasional latency | Shared public environment, not reproducible application behaviour |
+| Configurable product's HDD group is required but has no default selection | The required attribute is enforced: add-to-cart without HDD returns "Please select HDD". A conscious choice is valid design; the inconsistency with other groups was logged as an observation, not a defect |
 
 ---
 

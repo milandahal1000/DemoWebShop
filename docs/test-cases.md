@@ -103,14 +103,14 @@ on exact prices must be re-checked immediately before execution and recorded as 
 | Status | Count |
 |---|---:|
 | Total written | 31 |
-| Passed | 11 |
-| Failed | 3 |
+| Passed | 19 |
+| Failed | 4 |
 | Blocked | 0 |
-| Not Run | 17 |
-| Confirmed defects | 3 |
+| Not Run | 8 |
+| Confirmed defects | 4 |
 
-**Batch 1 complete:** 14 executed — 11 passed, 3 failed, 0 blocked (TC-012 → BUG-001, TC-013 → BUG-002, TC-017 → BUG-003). No Critical or High severity defects.
-**Batch 2 written:** 17 cases (catalog, product detail, search) awaiting execution.
+**Batch 1 complete:** 14 executed — 11 passed, 3 failed (TC-012 → BUG-001, TC-013 → BUG-002, TC-017 → BUG-003).
+**Batch 2 in progress:** catalog and product-detail cases executed. TC-033 failed → BUG-004 (configurable price not shown before the cart). Remaining: TC-035, TC-036, TC-040 – TC-045.
 
 ---
 
@@ -445,9 +445,9 @@ on exact prices must be re-checked immediately before execution and recorded as 
 | Test Data | Base URL `/` |
 | Test Steps | 1. Open the home page.<br>2. Check the header: logo, Register/Log in (or account), cart, wishlist, search box.<br>3. Check the main navigation lists the seven categories.<br>4. Check the **Featured products** section shows products with names and prices.<br>5. Check breadcrumb/slider/newsletter/footer areas render.<br>6. Note any broken image or missing section. |
 | Expected Result | Header, seven category links, featured products with prices, newsletter block, and footer information links all render. No broken images or error text. |
-| Actual Result | _Not executed_ |
-| Status | **Not Run** |
-| Evidence | — |
+| Actual Result | The home page rendered the full header, all **seven** category links, the slider, newsletter, community poll, a **Featured products** section with six products and prices, and footer sections (Information, Customer service, My account, Follow us). No broken images or error text. |
+| Status | **Pass** |
+| Evidence | `docs/screenshots/manual/TC-020_home-page.png`<br>`docs/screenshots/manual/TC-020_home-featured.png` |
 | Linked defect | — |
 
 ---
@@ -466,10 +466,11 @@ on exact prices must be re-checked immediately before execution and recorded as 
 | Test Data | `/books`, `/computers`, `/electronics`, `/apparel-shoes`, `/digital-downloads`, `/jewelry`, `/gift-cards` |
 | Test Steps | 1. Open each URL in turn.<br>2. For each, record the page heading.<br>3. Confirm at least one product is listed.<br>4. Confirm the heading matches the category name.<br>5. Note any empty or mismatched listing. |
 | Expected Result | All seven categories load with a matching heading and at least one product. No 404 or error page. |
-| Actual Result | _Not executed_ |
-| Status | **Not Run** |
-| Evidence | — |
+| Actual Result | All seven loaded with products: Books **6**, Computers **14** (page also shows the Desktops, Notebooks, and Accessories sub-categories), Electronics **7** (Camera, photo and Cell phones sub-categories), Apparel & Shoes **13**, Digital downloads **3**, Jewelry **5**, Gift cards **4**. No 404 or error page. |
+| Status | **Pass** |
+| Evidence | `docs/screenshots/manual/TC-022_computers-subcategory.png` (representative Computers listing); counts recorded from execution |
 | Linked defect | — |
+| Notes | Counts are point-in-time observations on a shared demo; assertions must not hard-code them. |
 
 ---
 
@@ -487,9 +488,9 @@ on exact prices must be re-checked immediately before execution and recorded as 
 | Test Data | `/desktops`, `/notebooks`, `/accessories` |
 | Test Steps | 1. Open `/computers`.<br>2. Confirm the sub-category links are present.<br>3. Open each sub-category.<br>4. Record heading, product count, and breadcrumb. |
 | Expected Result | Each sub-category opens its own listing with a matching heading and breadcrumb `Home / Computers / <sub-category>`. |
-| Actual Result | _Not executed_ |
-| Status | **Not Run** |
-| Evidence | — |
+| Actual Result | All three opened with products: Desktops **6**, Notebooks **1**, Accessories **7**. The breadcrumb read **HOME / COMPUTERS / DESKTOPS** on the Desktops page, matching the expected hierarchy. |
+| Status | **Pass** |
+| Evidence | `docs/screenshots/manual/TC-022_computers-subcategory.png` |
 | Linked defect | — |
 
 ---
@@ -508,9 +509,9 @@ on exact prices must be re-checked immediately before execution and recorded as 
 | Test Data | `/books`, a product page under Books |
 | Test Steps | 1. Open `/books` and record the breadcrumb.<br>2. Click the **Home** breadcrumb link.<br>3. Confirm the home page loads.<br>4. Return to `/books`, open a product, and record the product breadcrumb.<br>5. Click the category breadcrumb link. |
 | Expected Result | Breadcrumb reads `Home / Books` on the listing and `Home / Books / <product>` on the product page. Links navigate to the correct parent page. |
-| Actual Result | _Not executed_ |
-| Status | **Not Run** |
-| Evidence | — |
+| Actual Result | The Books listing breadcrumb read **Home / Books**; the product page read **HOME / BOOKS / COMPUTING AND INTERNET**. Both the Home and Books breadcrumb links navigated to the correct parent pages. |
+| Status | **Pass** |
+| Evidence | `docs/screenshots/manual/TC-023_breadcrumb.png` |
 | Linked defect | — |
 
 ---
@@ -531,9 +532,9 @@ on exact prices must be re-checked immediately before execution and recorded as 
 | Test Data | `/141-inch-laptop` |
 | Test Steps | 1. Open the product page.<br>2. Record the product name, image, price, and availability text.<br>3. Confirm a description is present.<br>4. Confirm the quantity field defaults to 1.<br>5. Confirm **Add to cart** is visible. |
 | Expected Result | Name **14.1-inch Laptop**, price **1590.00**, availability **In stock**, a description, qty **1**, and an enabled add-to-cart button. Values match the listing page. |
-| Actual Result | _Not executed_ |
-| Status | **Not Run** |
-| Evidence | — |
+| Actual Result | Name **14.1-inch Laptop**, price **1590.00**, availability **"Availability: In stock"**, description present, quantity default **1**, **Add to cart** enabled. The product breadcrumb was `HOME / COMPUTERS / NOTEBOOKS / 14.1-INCH LAPTOP` and the specifications table was also displayed. |
+| Status | **Pass** |
+| Evidence | `docs/screenshots/manual/TC-030_laptop-detail.png` |
 | Linked defect | — |
 | Notes | Prices on the shared demo can change; record the observed price and compare it with the listing rather than a fixed value. |
 
@@ -553,10 +554,11 @@ on exact prices must be re-checked immediately before execution and recorded as 
 | Test Data | `/computing-and-internet` |
 | Test Steps | 1. Open the product page.<br>2. Record the old price and the current price.<br>3. Confirm the current price is lower than the old price.<br>4. Compare both values with the price shown on the Books listing. |
 | Expected Result | Old price **30.00** and current price **10.00** are both displayed, the current price is lower, and the listing shows the same current price. |
-| Actual Result | _Not executed_ |
-| Status | **Not Run** |
-| Evidence | — |
+| Actual Result | The product page displayed **Old price: 30.00** and **Price: 10.00**, with the current price lower. The Books listing showed the same current price of 10.00 during preparation. |
+| Status | **Pass** |
+| Evidence | `docs/screenshots/manual/TC-023_breadcrumb.png` (shows the product page with both prices) |
 | Linked defect | — |
+| Notes | Evidence reused from the TC-023 capture because the same product page is visible; no duplicate screenshot taken. |
 
 ---
 
@@ -573,12 +575,12 @@ on exact prices must be re-checked immediately before execution and recorded as 
 | Preconditions | Store reachable |
 | Test Data | `/build-your-own-computer` |
 | Test Steps | 1. Open the product page.<br>2. Record the selected processor, RAM, HDD, and software options.<br>3. Record the displayed price.<br>4. Confirm every attribute group has a valid selection and no blank required field. |
-| Expected Result | The page loads with **2.5 GHz Intel Pentium Dual-Core E2200** selected, one HDD radio selected, the default software checkbox state, and a displayed price of **1200.00**. No attribute group is left unselected. |
-| Actual Result | _Not executed_ |
-| Status | **Not Run** |
-| Evidence | — |
+| Expected Result | The page loads with **2.5 GHz Intel Pentium Dual-Core E2200**, RAM **2 GB**, OS **Ubuntu**, and **Microsoft Office [+50.00]** selected. HDD is a required group with no default, so add-to-cart without a choice must be rejected. Displayed price **1200.00** (base). |
+| Actual Result | Defaults loaded exactly as above: processor 2.5 GHz [+15.00], RAM 2 GB, OS Ubuntu, Microsoft Office checked, **no HDD radio selected**, displayed price **1200.00**. Submitting without an HDD is rejected server-side: `POST /addproducttocart/details/16/1` with no HDD value returned `{"success":false,"message":["Please select HDD"]}`; the same request with HDD `18` (320 GB) returned success. The required attribute is therefore enforced. |
+| Status | **Pass** |
+| Evidence | `docs/screenshots/manual/TC-032_configurable-defaults.png` |
 | Linked defect | — |
-| Notes | Record the exact default labels and price; the demo's option configuration can change. |
+| Notes | **Test-design correction:** the original expected result demanded a preselected HDD. A required group without a default is valid as long as submission is blocked, which was verified directly. The base-only price shown here is a separate finding covered by TC-033 / BUG-004. |
 
 ---
 
@@ -596,11 +598,11 @@ on exact prices must be re-checked immediately before execution and recorded as 
 | Test Data | Processor: 2.2 GHz (no surcharge) · RAM: 4GB [+20.00] · Software checkbox toggled |
 | Test Steps | 1. Record the price with defaults.<br>2. Change the processor to the 2.2 GHz option and record the price.<br>3. Change RAM to 4GB and record the price.<br>4. Toggle a software checkbox and record the price.<br>5. Compare each change with the option surcharge shown in the label. |
 | Expected Result | The displayed price updates after each attribute change and equals the base price plus the selected attribute surcharges. Selecting a cheaper processor reduces the price; adding RAM/software increases it. |
-| Actual Result | _Not executed_ |
-| Status | **Not Run** |
-| Evidence | — |
-| Linked defect | — |
-| Notes | Record whether the price updates immediately or after an explicit action. This determines the automation wait strategy. |
+| Actual Result | The price stayed **1200.00** after every change: defaults **1200.00**, processor 2.2 GHz **1200.00**, RAM 4GB **1200.00**, software toggled **1200.00**. No request is made when an attribute changes, and the page contains no price-recalculation script. The cart, however, charged the correct configured price: **1325.00** for 2.5 GHz + 8GB + Office, and the changed configuration would total **1280.00** (1200 + 0 + 20 + 50 + 10). |
+| Status | **Fail** |
+| Evidence | `docs/screenshots/manual/TC-033_price-after-changes.png`<br>`docs/screenshots/manual/TC-034_cart-configurable.png` |
+| Linked defect | **BUG-004** |
+| Notes | The displayed price matches the base price only, excluding even the default surcharges (default configuration is 1265.00, not 1200.00). Automated tests must assert the cart price, not the product-page price. |
 
 ---
 
@@ -618,10 +620,11 @@ on exact prices must be re-checked immediately before execution and recorded as 
 | Test Data | Processor: 2.5 GHz · RAM: 8GB [+60.00] · HDD: default · Qty: 2 |
 | Test Steps | 1. Configure the product as above.<br>2. Set quantity to 2.<br>3. Click **Add to cart**.<br>4. Confirm the header cart counter increases by 2.<br>5. Open the cart and record the line description, unit price, quantity, and line total. |
 | Expected Result | The cart shows **Build your own computer** with the chosen options listed, quantity **2**, unit price equal to the configured price, and line total equal to unit price × 2. |
-| Actual Result | _Not executed_ |
-| Status | **Not Run** |
-| Evidence | — |
+| Actual Result | The cart showed **Build your own computer** with Processor 2.5 GHz [+15.00], RAM 8GB [+60.00], HDD 320 GB, OS Ubuntu, Software Microsoft Office [+50.00]; unit price **1325.00**, qty **2**, line total **2650.00**. The arithmetic is correct: 1200 + 15 + 60 + 50 = 1325 × 2 = 2650. The cart also held a $25 gift card with qty 5, so the cart contains 7 units after the add (5 before + 2). HDD had no default and was explicitly selected before adding. |
+| Status | **Pass** |
+| Evidence | `docs/screenshots/manual/TC-034_cart-configurable.png` |
 | Linked defect | — |
+| Notes | The header counter after the add was not captured in the screenshot; the +2 increment is corroborated by the line quantities (5 → 7). The counter value is confirmed separately. |
 
 ---
 
