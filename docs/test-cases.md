@@ -104,13 +104,13 @@ on exact prices must be re-checked immediately before execution and recorded as 
 |---|---:|
 | Total written | 31 |
 | Passed | 26 |
-| Failed | 4 |
+| Failed | 5 |
 | Blocked | 0 |
-| Not Run | 1 |
-| Confirmed defects | 4 |
+| Not Run | 0 |
+| Confirmed defects | 5 |
 
 **Batch 1 complete:** 14 executed — 11 passed, 3 failed (TC-012 → BUG-001, TC-013 → BUG-002, TC-017 → BUG-003).
-**Batch 2:** 16 of 17 executed — TC-033 failed → BUG-004. Only **TC-044** (search special characters) remains. No Critical or High severity defects.
+**Batch 2 complete:** 17 executed — 15 passed, 2 failed (TC-033 → BUG-004, TC-044 → BUG-005). No Critical or High severity defects.
 
 ---
 
@@ -775,11 +775,11 @@ on exact prices must be re-checked immediately before execution and recorded as 
 | Test Data | `<script>alert(1)</script>`, `%`, `'`, `--` |
 | Test Steps | 1. Search for `<script>alert(1)</script>`.<br>2. Confirm no alert dialog appears and the term is rendered as text or safely escaped.<br>3. Repeat for `%`, `'`, and `--`.<br>4. Confirm each returns a normal results/no-results page. |
 | Expected Result | No script executes, no server error page appears, and each term produces a handled results page. The literal characters are safely escaped if echoed. |
-| Actual Result | _Not executed_ |
-| Status | **Not Run** |
-| Evidence | — |
-| Linked defect | — |
-| Notes | Functional robustness check only; this is not a security audit. |
+| Actual Result | The `<script>alert(1)</script>` search did **not** execute script, but rendered the generic error page: **"We're sorry, an internal error occurred."** The same error occurs for any term containing `<` immediately followed by a letter — reproduced with `x<y`, `<b>`, `<ab`, `a<b>c`, and `<img src=x>`. Control inputs behave normally: `a<3`, `a< b`, `abc<`, and `price <100` return the normal no-results page. `%`, `'`, and `--` correctly return **"Search term minimum length is 3 characters"** because each is shorter than three characters. |
+| Status | **Fail** |
+| Evidence | `docs/screenshots/manual/TC-044_search-special-chars.png` |
+| Linked defect | **BUG-005** |
+| Notes | No script executed and no stack trace is exposed; the failure is an unhandled exception rendered by the global error handler, returned with HTTP 200. **Test-design correction:** `%`, `'`, and `--` are below the 3-character minimum, so the minimum-length message is correct for them; injection payloads must be at least three characters. |
 
 ---
 

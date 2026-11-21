@@ -66,4 +66,5 @@ TC-015_protected-redirect.png
 | TC-041 | `TC-041_search-no-results.png` | 21 Nov 2026 |
 | TC-042 | `TC-042_search-short-term.png` | 21 Nov 2026 |
 | TC-043 | `TC-043_search-case.png` | 21 Nov 2026 |
+| TC-044 | `TC-044_search-special-chars.png` | 21 Nov 2026 |
 | TC-045 | `TC-045_search-from-category.png` | 21 Nov 2026 |

@@ -24,11 +24,12 @@ Severity and priority definitions are in `test-plan.md`, Section 13.
 | BUG-002 | Login accepts empty credentials without required-field validation | Authentication | Low | Low | Always (1/1 + DOM) | Open |
 | BUG-003 | Password recovery reveals whether an email address is registered | Password recovery | Low | Medium | Always (1/1) | Open |
 | BUG-004 | Configurable product page shows only the base price, excluding selected option surcharges | Product detail | Low | Medium | Always (4/4 + cart) | Open |
+| BUG-005 | Search term containing a tag-like fragment returns an internal error page | Search | Medium | Medium | Always (5/5 inputs) | Open |
 
 | Metric | Count |
 |---|---:|
-| Confirmed defects | 4 |
-| Open | 4 |
+| Confirmed defects | 5 |
+| Open | 5 |
 | Retest passed / closed | 0 |
 
 ---
@@ -227,6 +228,53 @@ the cart price, never the product-page price, for configurable products.
 
 ---
 
+### BUG-005 — Tag-like search term returns an internal error page
+
+| Field | Value |
+|---|---|
+| Bug ID | BUG-005 |
+| Bug title | A search term containing `<` followed by a letter causes an unhandled server error |
+| Module | Search |
+| Environment | Public demo `https://demowebshop.tricentis.com/` · Brave 1.99.57 (Chromium 157) · CachyOS Linux · 21 Nov 2026 |
+| Preconditions | Store reachable; user signed in or out (the failure is independent of session state) |
+| Steps to reproduce | 1. Enter `<script>alert(1)</script>` in the header search box and submit.<br>2. Observe the page.<br>3. Repeat with `x<y`, `<b>`, `<ab`, and `<img src=x>`.<br>4. As controls, search `a<3`, `a< b`, `abc<`, and `price <100`. |
+| Expected result | Each term is handled as plain text and produces the normal search results or the no-results message. No error page is shown and no script executes. |
+| Actual result | Every term containing `<` immediately followed by a letter renders the generic error page **"We're sorry, an internal error occurred."** with HTTP status **200**. Reproduced with all five inputs above. Control terms where `<` is followed by a digit, a space, or the end of the string return the normal no-results page, so the trigger is specifically a tag-like fragment. No script executes and no stack trace is exposed. |
+| Severity | Medium |
+| Priority | Medium |
+| Reproducibility | Always — 5/5 tag-like inputs, repeated across two sessions |
+| Evidence | `docs/screenshots/manual/TC-044_search-special-chars.png` |
+| Status | Open |
+| Related items | Requirement `REQ-SRC-04` · Scenario `SC-SRC-04` · Test case `TC-044` |
+
+#### Impact
+
+A search for input such as `x<y` fails with an error page instead of results. The store
+remains available and the workaround is trivial (remove the `<`), which keeps severity at
+Medium. Because the error page is returned with HTTP 200, uptime monitoring and error
+alerting may not detect these failures.
+
+#### Root-cause hypothesis
+
+The keyword is passed through a component that parses or strips HTML-like fragments. An
+opening angle bracket followed by a letter is interpreted as the start of a tag, and the
+parser throws; the exception is caught by the global error handler and rendered as the
+Error view.
+
+#### Recommendation
+
+Treat the search term as plain text: HTML-encode or strip tag-like content without
+parsing it, and wrap the search in the normal validation path so malformed input returns
+the no-results page. Return an actual 5xx status for genuine server errors so monitoring
+can detect them.
+
+#### Notes
+
+This is a robustness defect, not a confirmed injection vulnerability: the payload did not
+execute and no stack trace was disclosed. A deeper security assessment is out of scope.
+
+---
+
 ## 3. Defects deliberately not raised
 
 | Observation | Why it is not a defect |
@@ -237,6 +285,7 @@ the cart price, never the product-page price, for configurable products.
 | `/order/history` returns a 404 | Invalid route, not a broken access control. The real endpoint is `/customer/orders`, which redirects to login correctly |
 | Demo slowness / occasional latency | Shared public environment, not reproducible application behaviour |
 | Configurable product's HDD group is required but has no default selection | The required attribute is enforced: add-to-cart without HDD returns "Please select HDD". A conscious choice is valid design; the inconsistency with other groups was logged as an observation, not a defect |
+| `%`, `'`, and `--` return "Search term minimum length is 3 characters" | Correct enforcement of the three-character rule — each input is shorter than three characters. A test-design error in TC-044, not an application defect |
 
 ---
 
