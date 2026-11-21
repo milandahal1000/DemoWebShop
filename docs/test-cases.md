@@ -103,15 +103,15 @@ on exact prices must be re-checked immediately before execution and recorded as 
 | Status | Count |
 |---|---:|
 | Total written | 45 |
-| Passed | 26 |
+| Passed | 33 |
 | Failed | 5 |
 | Blocked | 0 |
-| Not Run | 14 |
+| Not Run | 7 |
 | Confirmed defects | 5 |
 
 **Batch 1 complete:** 14 executed — 11 passed, 3 failed (TC-012 → BUG-001, TC-013 → BUG-002, TC-017 → BUG-003).
 **Batch 2 complete:** 17 executed — 15 passed, 2 failed (TC-033 → BUG-004, TC-044 → BUG-005). No Critical or High severity defects.
-**Batch 3 written:** 14 cases (sorting/filtering/paging and cart) awaiting execution. Cart baseline verified empty.
+**Batch 3 in progress:** TC-050–TC-055 and TC-060 passed (sorting, filtering, paging, empty cart). Remaining: cart TC-061–TC-067.
 
 ---
 
@@ -828,11 +828,10 @@ on exact prices must be re-checked immediately before execution and recorded as 
 | Test Data | Sort options: Position, Name: A to Z (`orderby=5`), Name: Z to A (`orderby=6`), Created on (`orderby=15`) |
 | Test Steps | 1. Select **Name: A to Z** and record the product order.<br>2. Select **Name: Z to A** and record the order.<br>3. Select **Created on** and record the order.<br>4. Compare the A–Z and Z–A sequences. |
 | Expected Result | A–Z is alphabetical: Computing and Internet, Copy of Computing and Internet EX, Fiction, Fiction EX, Health Book, Science. Z–A is the exact reverse. All six products remain present in both. Created on produces a stable order that is recorded as observed. |
-| Actual Result | _Not executed_ |
-| Status | **Not Run** |
-| Evidence | — |
+| Actual Result | **A–Z:** Computing and Internet, Copy of Computing and Internet EX, Fiction, Fiction EX, Health Book, Science. **Z–A:** Science, Health Book, Fiction EX, Fiction, Copy of Computing and Internet EX, Computing and Internet (exact reverse). **Created on:** Copy of Computing and Internet EX, Fiction EX, Fiction, Science, Health Book, Computing and Internet. All six products remained present in every view. |
+| Status | **Pass** |
+| Evidence | `docs/screenshots/manual/TC-050_sort-name-az.png` |
 | Linked defect | — |
-| Notes | Created on has no documented expected sequence in this project; record it and assert only that it is stable on reload. |
 
 ---
 
@@ -850,9 +849,9 @@ on exact prices must be re-checked immediately before execution and recorded as 
 | Test Data | Sort option Price: Low to High (`orderby=10`) |
 | Test Steps | 1. Select **Price: Low to High**.<br>2. Record each product name and price in display order.<br>3. Confirm all six products are still shown. |
 | Expected Result | Prices are non-decreasing: **10.00, 10.00, 10.00, 24.00, 24.00, 51.00**. All six products are present. Ties may appear in any order. |
-| Actual Result | _Not executed_ |
-| Status | **Not Run** |
-| Evidence | — |
+| Actual Result | Display order: Computing and Internet 10.00, Health Book 10.00, Copy of Computing and Internet EX 10.00, Fiction 24.00, Fiction EX 24.00, Science 51.00. Prices were non-decreasing and all six products were present. |
+| Status | **Pass** |
+| Evidence | `docs/screenshots/manual/TC-051_sort-price-asc.png` |
 | Linked defect | — |
 
 ---
@@ -871,9 +870,9 @@ on exact prices must be re-checked immediately before execution and recorded as 
 | Test Data | Sort option Price: High to Low (`orderby=11`) |
 | Test Steps | 1. Select **Price: High to Low**.<br>2. Record each product name and price in display order.<br>3. Confirm all six products are still shown. |
 | Expected Result | Prices are non-increasing: **51.00, 24.00, 24.00, 10.00, 10.00, 10.00**. All six products are present. Ties may appear in any order. |
-| Actual Result | _Not executed_ |
-| Status | **Not Run** |
-| Evidence | — |
+| Actual Result | Display order: Science 51.00, Fiction 24.00, Fiction EX 24.00, Copy of Computing and Internet EX 10.00, Computing and Internet 10.00, Health Book 10.00. Prices were non-increasing and all six products were present. |
+| Status | **Pass** |
+| Evidence | `docs/screenshots/manual/TC-052_sort-price-desc.png` |
 | Linked defect | — |
 
 ---
@@ -891,12 +890,12 @@ on exact prices must be re-checked immediately before execution and recorded as 
 | Preconditions | `/books` open |
 | Test Data | Under 25.00 (`price=-25`), 25.00–50.00 (`price=25-50`), Over 50.00 (`price=50-`) |
 | Test Steps | 1. Apply **Under 25.00** and record products and prices.<br>2. Remove the filter, then apply **25.00 – 50.00** and record the result.<br>3. Remove the filter, then apply **Over 50.00** and record the result.<br>4. Confirm the active filter is visibly indicated each time. |
-| Expected Result | Under 25.00: five products, every price below 25.00 (10.00, 10.00, 10.00, 24.00, 24.00). 25.00–50.00: no matching products, so the no-results message is shown. Over 50.00: one product, Science at 51.00. The other products are excluded each time. |
-| Actual Result | _Not executed_ |
-| Status | **Not Run** |
-| Evidence | — |
+| Expected Result | Under 25.00: five products, every price below 25.00 (10.00, 10.00, 10.00, 24.00, 24.00). 25.00–50.00: no products match this catalog, so an empty product area is the correct filtered result. Over 50.00: one product, Science at 51.00. The other products are excluded each time. |
+| Actual Result | **Under 25.00:** five products — Computing and Internet 10.00, Copy of Computing and Internet EX 10.00, Fiction 24.00, Fiction EX 24.00, Health Book 10.00. **25.00 – 50.00:** zero products; the product area was empty, a **Remove Filter** control was shown, and no no-results message appeared. **Over 50.00:** Science 51.00 only. |
+| Status | **Pass** |
+| Evidence | `docs/screenshots/manual/TC-053_filter-under25.png`<br>`docs/screenshots/manual/TC-053_filter-over50.png` |
 | Linked defect | — |
-| Notes | The 25.00–50.00 range is empty with the current catalog; that is a valid result, not a defect. The boundary products sit at 24.00 and 51.00, so exact inclusiveness at 25/50 cannot be observed. |
+| Notes | The 25.00–50.00 range is empty with the current catalog; that is a valid result, not a defect. The boundary products sit at 24.00 and 51.00, so exact inclusiveness at 25/50 cannot be observed. **Test-design correction:** the requirement is range filtering, not a no-results message; the blank product area is recorded as a UX observation in `bug-reports.md` rather than a defect. |
 
 ---
 
@@ -914,9 +913,9 @@ on exact prices must be re-checked immediately before execution and recorded as 
 | Test Data | Display 4, 8, 12 per page (`pagesize`) |
 | Test Steps | 1. Set Display to **4**. Record page 1 and the pager links.<br>2. Open page 2 and record the products.<br>3. Set Display to **8**, then **12**, recording the product count and whether a pager is shown. |
 | Expected Result | With 4 per page: two pages, page 1 has four products and page 2 has two; the pager offers page 1 and 2. With 8 and 12 per page: all six products appear on one page and no pager is needed. |
-| Actual Result | _Not executed_ |
-| Status | **Not Run** |
-| Evidence | — |
+| Actual Result | **Display 4:** a pager appeared with pages 1 and 2; page 1 showed four products and page 2 showed two. **Display 8 and 12:** all six products appeared on one page and no pager was shown. |
+| Status | **Pass** |
+| Evidence | `docs/screenshots/manual/TC-054_pagesize-4.png` |
 | Linked defect | — |
 | Notes | The pager appears only when the product count exceeds the page size. |
 
@@ -935,12 +934,12 @@ on exact prices must be re-checked immediately before execution and recorded as 
 | Preconditions | `/books` open |
 | Test Data | Under 25.00 filter · Price: High to Low · Display 4 |
 | Test Steps | 1. Apply **Under 25.00**.<br>2. Set sort to **Price: High to Low**.<br>3. Set Display to **4**.<br>4. Confirm the URL and the listing show all three settings.<br>5. Open page 2 and confirm the filter and sort still apply.<br>6. Remove the price filter and record whether sort and page size are retained. |
-| Expected Result | The listing shows only the five products under 25.00, in descending price (24.00, 24.00, 10.00, 10.00, 10.00), four on page 1 and one on page 2. The URL contains `price=-25`, `orderby=11`, and `pagesize=4`. Removing the filter restores all six products. |
-| Actual Result | _Not executed_ |
-| Status | **Not Run** |
-| Evidence | — |
+| Expected Result | The listing shows only the five products under 25.00, in descending price (24.00, 24.00, 10.00, 10.00, 10.00), four on page 1 and one on page 2. The URL contains `price=-25`, `orderby=11`, and `pagesize=4`. Removing the filter makes the full six-product set available again across two pages. |
+| Actual Result | Final URL: `https://demowebshop.tricentis.com/books?price=-25&orderby=11&pagesize=4`. Page 1 showed Fiction 24.00, Fiction EX 24.00, Computing and Internet 10.00, Health Book 10.00; page 2 showed Copy of Computing and Internet EX 10.00. Filter and sort were still applied on page 2. Removing the filter retained **Price: High to Low** and **Display 4**; the six products were then available across two pages. |
+| Status | **Pass** |
+| Evidence | `docs/screenshots/manual/TC-055_combined.png` |
 | Linked defect | — |
-| Notes | Record the exact filter-removal control and whether sort/page size survive it; either behaviour is acceptable if consistent. |
+| Notes | The saved `TC-055_combined.png` was captured before the price filter took effect (Science 51.00 is visible). The final URL and page-2 result confirm the filter; a corrected screenshot showing the applied state is requested. |
 
 ---
 
@@ -964,10 +963,11 @@ on exact prices must be re-checked immediately before execution and recorded as 
 | Test Data | `/cart` |
 | Test Steps | 1. Open the cart.<br>2. Record the header counter, the page message, and the number of product rows.<br>3. Confirm whether Update, Checkout, or discount/gift-card controls are available. |
 | Expected Result | Header shows **Shopping cart (0)**. The page shows **"Your Shopping Cart is empty!"**, no product rows, and no checkout or update action. A way back to the catalog is offered. |
-| Actual Result | _Not executed_ |
-| Status | **Not Run** |
-| Evidence | — |
+| Actual Result | Header showed **Shopping cart (0)** and the page showed **"Your Shopping Cart is empty!"** with no product rows and no Update or Checkout controls. The catalog navigation was available. The checkout progress indicator was still rendered above the empty message. |
+| Status | **Pass** |
+| Evidence | `docs/screenshots/manual/TC-060_cart-empty.png` |
 | Linked defect | — |
+| Notes | The progress indicator on an empty cart is cosmetic; it does not offer a checkout path. |
 
 ---
 

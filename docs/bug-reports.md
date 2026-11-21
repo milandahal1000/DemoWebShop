@@ -286,6 +286,7 @@ execute and no stack trace was disclosed. A deeper security assessment is out of
 | Demo slowness / occasional latency | Shared public environment, not reproducible application behaviour |
 | Configurable product's HDD group is required but has no default selection | The required attribute is enforced: add-to-cart without HDD returns "Please select HDD". A conscious choice is valid design; the inconsistency with other groups was logged as an observation, not a defect |
 | `%`, `'`, and `--` return "Search term minimum length is 3 characters" | Correct enforcement of the three-character rule — each input is shorter than three characters. A test-design error in TC-044, not an application defect |
+| A price filter with zero matching products shows an empty product area and no no-results message | REQ-FLT-02 only requires the filter to return in-range products, which it does. The search page shows a message but the category filter does not; logged as a UX observation, not a defect |
 
 ---
 

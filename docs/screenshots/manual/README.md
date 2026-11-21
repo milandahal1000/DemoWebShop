@@ -68,3 +68,11 @@ TC-015_protected-redirect.png
 | TC-043 | `TC-043_search-case.png` | 21 Nov 2026 |
 | TC-044 | `TC-044_search-special-chars.png` | 21 Nov 2026 |
 | TC-045 | `TC-045_search-from-category.png` | 21 Nov 2026 |
+| TC-050 | `TC-050_sort-name-az.png` | 21 Nov 2026 |
+| TC-051 | `TC-051_sort-price-asc.png` | 21 Nov 2026 |
+| TC-052 | `TC-052_sort-price-desc.png` | 21 Nov 2026 |
+| TC-053 | `TC-053_filter-under25.png` | 21 Nov 2026 |
+| TC-053 | `TC-053_filter-over50.png` | 21 Nov 2026 |
+| TC-054 | `TC-054_pagesize-4.png` | 21 Nov 2026 |
+| TC-055 | `TC-055_combined.png` | 21 Nov 2026 (pre-filter state; corrected capture pending) |
+| TC-060 | `TC-060_cart-empty.png` | 21 Nov 2026 |
