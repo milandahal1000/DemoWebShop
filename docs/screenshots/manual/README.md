@@ -60,3 +60,10 @@ TC-015_protected-redirect.png
 | TC-032 | `TC-032_configurable-defaults.png` | 21 Nov 2026 |
 | TC-033 | `TC-033_price-after-changes.png` | 21 Nov 2026 |
 | TC-034 | `TC-034_cart-configurable.png` | 21 Nov 2026 |
+| TC-035 | `TC-035_giftcard-validation.png` | 21 Nov 2026 |
+| TC-036 | `TC-036_music2-add.png` | 21 Nov 2026 |
+| TC-040 | `TC-040_search-computer.png` | 21 Nov 2026 |
+| TC-041 | `TC-041_search-no-results.png` | 21 Nov 2026 |
+| TC-042 | `TC-042_search-short-term.png` | 21 Nov 2026 |
+| TC-043 | `TC-043_search-case.png` | 21 Nov 2026 |
+| TC-045 | `TC-045_search-from-category.png` | 21 Nov 2026 |

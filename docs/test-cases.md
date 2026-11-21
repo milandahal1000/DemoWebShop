@@ -103,14 +103,14 @@ on exact prices must be re-checked immediately before execution and recorded as 
 | Status | Count |
 |---|---:|
 | Total written | 31 |
-| Passed | 19 |
+| Passed | 26 |
 | Failed | 4 |
 | Blocked | 0 |
-| Not Run | 8 |
+| Not Run | 1 |
 | Confirmed defects | 4 |
 
 **Batch 1 complete:** 14 executed — 11 passed, 3 failed (TC-012 → BUG-001, TC-013 → BUG-002, TC-017 → BUG-003).
-**Batch 2 in progress:** catalog and product-detail cases executed. TC-033 failed → BUG-004 (configurable price not shown before the cart). Remaining: TC-035, TC-036, TC-040 – TC-045.
+**Batch 2:** 16 of 17 executed — TC-033 failed → BUG-004. Only **TC-044** (search special characters) remains. No Critical or High severity defects.
 
 ---
 
@@ -642,11 +642,11 @@ on exact prices must be re-checked immediately before execution and recorded as 
 | Test Data | `/25-virtual-gift-card` with Recipient name, Recipient email, Sender name, Sender email left empty |
 | Test Steps | 1. Open the gift card product page.<br>2. Leave all gift-card detail fields empty.<br>3. Leave quantity at 1.<br>4. Click **Add to cart**.<br>5. Record every validation message.<br>6. Confirm the cart counter did not change. |
 | Expected Result | Adding is blocked with required-field messages for the empty gift-card fields (expected set: recipient name, recipient email, sender name, sender email). The product is not added to the cart. |
-| Actual Result | _Not executed_ |
-| Status | **Not Run** |
-| Evidence | — |
+| Actual Result | With all four fields empty, adding was blocked and the header counter stayed at **7**. The page displayed a red error banner at the top with four messages: **"Enter valid recipient name"**, **"Enter valid recipient email"**, **"Enter valid sender name"**, **"Enter valid sender email"**. The same request sent directly to `/addproducttocart/details/2/1` returned `success:false` with the identical four messages; with all four fields supplied it returned `success:true`, so the validation is enforced server-side and not only in the browser. |
+| Status | **Pass** |
+| Evidence | `docs/screenshots/manual/TC-035_giftcard-validation.png` |
 | Linked defect | — |
-| Notes | Verifies assumption A5 — record exactly which fields are required. |
+| Notes | The messages render as a site-level red banner at the top of the page, not as native browser validation bubbles. All four gift-card fields are mandatory; the optional **Message** field was not required. |
 
 ---
 
@@ -664,10 +664,11 @@ on exact prices must be re-checked immediately before execution and recorded as 
 | Test Data | `/music-2`, quantity 1 |
 | Test Steps | 1. Open the product page.<br>2. Confirm the price and **Download sample** link.<br>3. Click the sample link and confirm a download starts or a sample page opens.<br>4. Return to the product and click **Add to cart**.<br>5. Confirm the header cart counter increments by 1 and the flyout shows **Music 2**. |
 | Expected Result | The digital download shows price **3.00** and a working sample link. Adding it increments the cart counter by 1 and displays the product in the cart flyout. |
-| Actual Result | _Not executed_ |
-| Status | **Not Run** |
-| Evidence | — |
+| Actual Result | The page showed price **3.00** and a working **DOWNLOAD SAMPLE** button; clicking it downloaded a file. After **Add to cart**, the header counter changed from **7 to 8**. |
+| Status | **Pass** |
+| Evidence | `docs/screenshots/manual/TC-036_music2-add.png` |
 | Linked defect | — |
+| Notes | The cart flyout contents were not captured in the screenshot; the counter increment is confirmed by the header badge (7 → 8). The cart now holds 8 units: gift card 5 + computer 2 + Music 2 1. |
 
 ---
 
@@ -686,11 +687,12 @@ on exact prices must be re-checked immediately before execution and recorded as 
 | Preconditions | Store reachable |
 | Test Data | Keyword `computer` |
 | Test Steps | 1. Enter `computer` in the header search box.<br>2. Submit the search.<br>3. Record the result count and the product names shown.<br>4. Confirm every result is plausibly related to the keyword. |
-| Expected Result | The search results page lists matching products (including computer products) with a result count. No error or blank page. |
-| Actual Result | _Not executed_ |
-| Status | **Not Run** |
-| Evidence | — |
+| Expected Result | The search results page lists the matching products in a grid, with no error or blank page. (Refined: this theme does not display a numeric result count.) |
+| Actual Result | Searching `computer` returned four products: **Build your own cheap computer (800.00)**, **Build your own computer (1200.00)**, **Build your own expensive computer (1800.00)**, and **Simple Computer (800.00)**. No numeric "N results" text is displayed and no error occurred. |
+| Status | **Pass** |
+| Evidence | `docs/screenshots/manual/TC-040_search-computer.png` |
 | Linked defect | — |
+| Notes | **Test-design correction:** the original oracle required a result count, but this theme shows only the product grid. The observable criteria are the grid contents and the no-results message. |
 
 ---
 
@@ -708,9 +710,9 @@ on exact prices must be re-checked immediately before execution and recorded as 
 | Test Data | Keyword `zzzznotfound` |
 | Test Steps | 1. Search for `zzzznotfound`.<br>2. Record the message and whether a product grid is shown. |
 | Expected Result | The page displays **"No products were found that matched your criteria."** and no product grid or error page. |
-| Actual Result | _Not executed_ |
-| Status | **Not Run** |
-| Evidence | — |
+| Actual Result | The page displayed **"No products were found that matched your criteria."** No product grid was shown and no error page appeared. |
+| Status | **Pass** |
+| Evidence | `docs/screenshots/manual/TC-041_search-no-results.png` |
 | Linked defect | — |
 
 ---
@@ -729,11 +731,11 @@ on exact prices must be re-checked immediately before execution and recorded as 
 | Test Data | Keyword `ab` (2 characters) |
 | Test Steps | 1. Search for `ab`.<br>2. Record the message.<br>3. Repeat with `abc` (3 characters) and confirm the search executes. |
 | Expected Result | `ab` is rejected with **"Search term minimum length is 3 characters"**. `abc` executes and returns a results page. This confirms assumption A2. |
-| Actual Result | _Not executed_ |
-| Status | **Not Run** |
-| Evidence | — |
+| Actual Result | `ab` was rejected with **"Search term minimum length is 3 characters"**. `abc` executed and returned a results page, which displayed **"No products were found that matched your criteria."** — a normal search result, not the length error. |
+| Status | **Pass** |
+| Evidence | `docs/screenshots/manual/TC-042_search-short-term.png` |
 | Linked defect | — |
-| Notes | Assumption A2 (minimum 3) verified during preparation by an unauthenticated request; still confirm in the browser. |
+| Notes | Assumption A2 confirmed in the browser: the minimum is **3** characters. `abc` is valid but has no matching products. |
 
 ---
 
@@ -751,10 +753,11 @@ on exact prices must be re-checked immediately before execution and recorded as 
 | Test Data | Keywords `computer`, `COMPUTER`, `Computer` |
 | Test Steps | 1. Search for `computer` and record the result count and names.<br>2. Repeat for `COMPUTER`.<br>3. Repeat for `Computer`.<br>4. Compare the three result sets. |
 | Expected Result | All three searches return the same products and count. |
-| Actual Result | _Not executed_ |
-| Status | **Not Run** |
-| Evidence | — |
+| Actual Result | All three queries returned the same four products in the same order: Build your own cheap computer, Build your own computer, Build your own expensive computer, and Simple Computer. |
+| Status | **Pass** |
+| Evidence | `docs/screenshots/manual/TC-043_search-case.png` |
 | Linked defect | — |
+| Notes | A numeric result count is not displayed; comparison is by product set and order. |
 
 ---
 
@@ -794,10 +797,11 @@ on exact prices must be re-checked immediately before execution and recorded as 
 | Test Data | Start on `/books`; keyword `laptop` |
 | Test Steps | 1. Open `/books`.<br>2. Type `laptop` in the header search box.<br>3. Submit.<br>4. Record the resulting URL, count, and products. |
 | Expected Result | The search executes from the inner page and displays results for `laptop` (for example the 14.1-inch Laptop) without navigating to an error page. |
-| Actual Result | _Not executed_ |
-| Status | **Not Run** |
-| Evidence | — |
+| Actual Result | Searching `laptop` from `/books` produced `/search?q=laptop` and a single result: **14.1-inch Laptop**, priced **1590.00**, with an **Add to cart** button. No error page. |
+| Status | **Pass** |
+| Evidence | `docs/screenshots/manual/TC-045_search-from-category.png` |
 | Linked defect | — |
+| Notes | The product is **14.1-inch Laptop** (the reported "14.2-inch" was a typo). The result appears without leaving the search flow. |
 
 ---
 
