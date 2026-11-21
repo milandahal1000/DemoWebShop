@@ -247,6 +247,7 @@ Confirmed defects are traced back to the requirement and test case that exposed 
 | BUG-003 | REQ-AUTH-06 | SC-AUTH-08 | TC-017 | Low | Medium | Open |
 | BUG-004 | REQ-PRD-03 | SC-PRD-04 | TC-033 | Low | Medium | Open |
 | BUG-005 | REQ-SRC-04 | SC-SRC-04 | TC-044 | Medium | Medium | Open |
+| BUG-006 | REQ-CART-06 | SC-CART-11 | TC-067 | Low | Low | Open |
 
 Details and evidence: `bug-reports.md`.
 

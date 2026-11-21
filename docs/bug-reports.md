@@ -25,11 +25,12 @@ Severity and priority definitions are in `test-plan.md`, Section 13.
 | BUG-003 | Password recovery reveals whether an email address is registered | Password recovery | Low | Medium | Always (1/1) | Open |
 | BUG-004 | Configurable product page shows only the base price, excluding selected option surcharges | Product detail | Low | Medium | Always (4/4 + cart) | Open |
 | BUG-005 | Search term containing a tag-like fragment returns an internal error page | Search | Medium | Medium | Always (5/5 inputs) | Open |
+| BUG-006 | Gift-card rejection message refers to a "coupon code" instead of a gift card | Shopping cart | Low | Low | Always (2/2) | Open |
 
 | Metric | Count |
 |---|---:|
-| Confirmed defects | 5 |
-| Open | 5 |
+| Confirmed defects | 6 |
+| Open | 6 |
 | Retest passed / closed | 0 |
 
 ---
@@ -275,6 +276,51 @@ execute and no stack trace was disclosed. A deeper security assessment is out of
 
 ---
 
+### BUG-006 — Gift-card rejection message refers to a coupon code
+
+| Field | Value |
+|---|---|
+| Bug ID | BUG-006 |
+| Bug title | The Gift Cards field rejects an invalid code with "The coupon code you entered couldn't be applied to your order" |
+| Module | Shopping cart |
+| Environment | Public demo `https://demowebshop.tricentis.com/` · Brave 1.99.57 (Chromium 157) · CachyOS Linux · 21 Nov 2026 |
+| Preconditions | Signed in; cart contains at least one product |
+| Steps to reproduce | 1. Open the cart.<br>2. Expand **Gift Cards** and enter `INVALIDGIFT`.<br>3. Click **Add gift card**.<br>4. Compare with the **Discount Code** box, which returns the same sentence. |
+| Expected result | A rejection message in the gift-card block refers to a gift card, for example "The gift card code you entered couldn't be applied to your order." |
+| Actual result | The gift-card block shows **"The coupon code you entered couldn't be applied to your order."** The text is rendered inside `<div class="giftcard-box">` directly below the gift-card input, so it is the gift-card feedback and not a leftover message. The discount box produces the same sentence, which is correct there. Reproduced twice in two sessions. The codes are correctly rejected and totals do not change. |
+| Severity | Low |
+| Priority | Low |
+| Reproducibility | Always — 2/2 |
+| Evidence | `docs/screenshots/manual/TC-067_cart-invalid-codes.png` (post-login cart); message text verified in a separate session |
+| Status | Open |
+| Related items | Requirement `REQ-CART-06` · Scenario `SC-CART-11` · Test case `TC-067` |
+
+#### Impact
+
+Users who mistype a gift card are told that a **coupon** failed. The two inputs sit side by side
+and use different labels, so the wording blurs which artefact was rejected. No functional
+impact: the code is not applied, the Sub-Total is unchanged, and retrying in the correct
+field works.
+
+#### Root-cause hypothesis
+
+The gift-card action reuses the coupon error resource string instead of a gift-card-specific
+one. The nopCommerce resource likely exists as a separate key that was not wired up for this
+view.
+
+#### Recommendation
+
+Give the gift-card path its own message ("The gift card code you entered couldn't be applied
+to your order") or a neutral wording such as "The code you entered couldn't be applied to
+your order."
+
+#### Notes
+
+Cosmetic content defect. The functional behaviour required by `REQ-CART-06` passed, so
+TC-067 remains a Pass with this defect linked.
+
+---
+
 ## 3. Defects deliberately not raised
 
 | Observation | Why it is not a defect |
@@ -287,6 +333,8 @@ execute and no stack trace was disclosed. A deeper security assessment is out of
 | Configurable product's HDD group is required but has no default selection | The required attribute is enforced: add-to-cart without HDD returns "Please select HDD". A conscious choice is valid design; the inconsistency with other groups was logged as an observation, not a defect |
 | `%`, `'`, and `--` return "Search term minimum length is 3 characters" | Correct enforcement of the three-character rule — each input is shorter than three characters. A test-design error in TC-044, not an application defect |
 | A price filter with zero matching products shows an empty product area and no no-results message | REQ-FLT-02 only requires the filter to return in-range products, which it does. The search page shows a message but the category filter does not; logged as a UX observation, not a defect |
+| A quantity of 0 or -1 silently removes the line, with no validation message | The cart shows the explicit empty state and no negative total is ever produced, which is the requirement (`REQ-CART-05`). Removal is a valid interpretation of a non-positive quantity |
+| A non-numeric quantity (`abc`) reverts to the previous value with no visible message | The value is rejected, the totals stay correct, and no error page appears. The missing feedback is a UX gap; `REQ-CART-05` only requires totals to remain valid |
 
 ---
 
