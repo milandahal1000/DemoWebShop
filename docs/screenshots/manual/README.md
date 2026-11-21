@@ -72,7 +72,16 @@ TC-015_protected-redirect.png
 | TC-051 | `TC-051_sort-price-asc.png` | 21 Nov 2026 |
 | TC-052 | `TC-052_sort-price-desc.png` | 21 Nov 2026 |
 | TC-053 | `TC-053_filter-under25.png` | 21 Nov 2026 |
+| TC-053 | `TC-053_filter-25-50.png` | 21 Nov 2026 |
 | TC-053 | `TC-053_filter-over50.png` | 21 Nov 2026 |
 | TC-054 | `TC-054_pagesize-4.png` | 21 Nov 2026 |
-| TC-055 | `TC-055_combined.png` | 21 Nov 2026 (pre-filter state; corrected capture pending) |
+| TC-055 | `TC-055_combined.png` | 21 Nov 2026 (pre-filter state, retained for sort/page size) |
+| TC-055 | `TC-055_combined-applied.png` | 21 Nov 2026 (filter, sort and page size together) |
 | TC-060 | `TC-060_cart-empty.png` | 21 Nov 2026 |
+| TC-061 | `TC-061_cart-one-item.png` | 21 Nov 2026 |
+| TC-062 | `TC-062_cart-two-items.png` | 21 Nov 2026 |
+| TC-063 | `TC-063_cart-duplicate-add.png` | 21 Nov 2026 |
+| TC-064 | `TC-064_cart-qty-updated.png` | 21 Nov 2026 |
+| TC-065 | `TC-065_cart-item-removed.png` | 21 Nov 2026 |
+| TC-066 | `TC-066_cart-invalid-qty.png` | 21 Nov 2026 (restored state; message capture pending) |
+| TC-067 | `TC-067_cart-invalid-codes.png` | 21 Nov 2026 (post-login state; error capture pending) |

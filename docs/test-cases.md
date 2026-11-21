@@ -103,15 +103,15 @@ on exact prices must be re-checked immediately before execution and recorded as 
 | Status | Count |
 |---|---:|
 | Total written | 45 |
-| Passed | 33 |
+| Passed | 38 |
 | Failed | 5 |
 | Blocked | 0 |
-| Not Run | 7 |
+| Not Run | 2 |
 | Confirmed defects | 5 |
 
 **Batch 1 complete:** 14 executed — 11 passed, 3 failed (TC-012 → BUG-001, TC-013 → BUG-002, TC-017 → BUG-003).
 **Batch 2 complete:** 17 executed — 15 passed, 2 failed (TC-033 → BUG-004, TC-044 → BUG-005). No Critical or High severity defects.
-**Batch 3 in progress:** TC-050–TC-055 and TC-060 passed (sorting, filtering, paging, empty cart). Remaining: cart TC-061–TC-067.
+**Batch 3 in progress:** TC-050–TC-065 and TC-060 passed. TC-066 and TC-067 are partially executed; retests and message screenshots are pending.
 
 ---
 
@@ -893,7 +893,7 @@ on exact prices must be re-checked immediately before execution and recorded as 
 | Expected Result | Under 25.00: five products, every price below 25.00 (10.00, 10.00, 10.00, 24.00, 24.00). 25.00–50.00: no products match this catalog, so an empty product area is the correct filtered result. Over 50.00: one product, Science at 51.00. The other products are excluded each time. |
 | Actual Result | **Under 25.00:** five products — Computing and Internet 10.00, Copy of Computing and Internet EX 10.00, Fiction 24.00, Fiction EX 24.00, Health Book 10.00. **25.00 – 50.00:** zero products; the product area was empty, a **Remove Filter** control was shown, and no no-results message appeared. **Over 50.00:** Science 51.00 only. |
 | Status | **Pass** |
-| Evidence | `docs/screenshots/manual/TC-053_filter-under25.png`<br>`docs/screenshots/manual/TC-053_filter-over50.png` |
+| Evidence | `docs/screenshots/manual/TC-053_filter-under25.png`<br>`docs/screenshots/manual/TC-053_filter-25-50.png`<br>`docs/screenshots/manual/TC-053_filter-over50.png` |
 | Linked defect | — |
 | Notes | The 25.00–50.00 range is empty with the current catalog; that is a valid result, not a defect. The boundary products sit at 24.00 and 51.00, so exact inclusiveness at 25/50 cannot be observed. **Test-design correction:** the requirement is range filtering, not a no-results message; the blank product area is recorded as a UX observation in `bug-reports.md` rather than a defect. |
 
@@ -937,9 +937,9 @@ on exact prices must be re-checked immediately before execution and recorded as 
 | Expected Result | The listing shows only the five products under 25.00, in descending price (24.00, 24.00, 10.00, 10.00, 10.00), four on page 1 and one on page 2. The URL contains `price=-25`, `orderby=11`, and `pagesize=4`. Removing the filter makes the full six-product set available again across two pages. |
 | Actual Result | Final URL: `https://demowebshop.tricentis.com/books?price=-25&orderby=11&pagesize=4`. Page 1 showed Fiction 24.00, Fiction EX 24.00, Computing and Internet 10.00, Health Book 10.00; page 2 showed Copy of Computing and Internet EX 10.00. Filter and sort were still applied on page 2. Removing the filter retained **Price: High to Low** and **Display 4**; the six products were then available across two pages. |
 | Status | **Pass** |
-| Evidence | `docs/screenshots/manual/TC-055_combined.png` |
+| Evidence | `docs/screenshots/manual/TC-055_combined.png`<br>`docs/screenshots/manual/TC-055_combined-applied.png` |
 | Linked defect | — |
-| Notes | The saved `TC-055_combined.png` was captured before the price filter took effect (Science 51.00 is visible). The final URL and page-2 result confirm the filter; a corrected screenshot showing the applied state is requested. |
+| Notes | `TC-055_combined.png` was captured before the price filter took effect (Science 51.00 is visible) and is retained for the sort/page-size state. `TC-055_combined-applied.png` shows the corrected applied state: High to Low, Display 4, Under 25.00, page 1 without Science, pager 1/2. |
 
 ---
 
@@ -985,9 +985,9 @@ on exact prices must be re-checked immediately before execution and recorded as 
 | Test Data | Computing and Internet · 10.00 · quantity 1 |
 | Test Steps | 1. Click **Add to cart** on the Computing and Internet card.<br>2. Record the header counter and the flyout.<br>3. Open the cart and record unit price, quantity, line total, and Sub-Total.<br>4. Navigate to the home page, return to the cart, and refresh.<br>5. Confirm the row is still present and unchanged. |
 | Expected Result | Counter changes 0 → 1. The cart shows one row: **Computing and Internet**, unit **10.00**, qty **1**, line total **10.00**, Sub-Total **10.00**. The row persists after navigation and refresh. |
-| Actual Result | _Not executed_ |
-| Status | **Not Run** |
-| Evidence | — |
+| Actual Result | The header changed to **Shopping cart (1)**. The cart showed one row: Computing and Internet, unit 10.00, qty 1, line total 10.00, Sub-Total 10.00, Shipping 0.00, Tax 0.00, Total 10.00. The row remained after navigating away and refreshing. |
+| Status | **Pass** |
+| Evidence | `docs/screenshots/manual/TC-061_cart-one-item.png` |
 | Linked defect | — |
 
 ---
@@ -1006,9 +1006,9 @@ on exact prices must be re-checked immediately before execution and recorded as 
 | Test Data | 14.1-inch Laptop · 1590.00 · quantity 1 |
 | Test Steps | 1. Open `/141-inch-laptop`.<br>2. Leave quantity at 1 and click **Add to cart**.<br>3. Open the cart and record both rows and the Sub-Total. |
 | Expected Result | Two rows: Computing and Internet (10.00 × 1) and 14.1-inch Laptop (1590.00 × 1). Sub-Total **1600.00**. Header counter **2**. |
-| Actual Result | _Not executed_ |
-| Status | **Not Run** |
-| Evidence | — |
+| Actual Result | Two rows appeared: Computing and Internet 10.00 × 1 and 14.1-inch Laptop 1590.00 × 1. Sub-Total **1600.00**, Shipping 0.00, Tax 0.00, Total 1600.00. Header showed **Shopping cart (2)**. |
+| Status | **Pass** |
+| Evidence | `docs/screenshots/manual/TC-062_cart-two-items.png` |
 | Linked defect | — |
 
 ---
@@ -1027,9 +1027,9 @@ on exact prices must be re-checked immediately before execution and recorded as 
 | Test Data | Computing and Internet added a second time |
 | Test Steps | 1. Return to `/books`.<br>2. Click **Add to cart** on Computing and Internet again.<br>3. Open the cart and record the number of rows, the book quantity, and the Sub-Total. |
 | Expected Result | Still **two** rows, not three. The book row shows qty **2**, line total **20.00**; the laptop remains 1590.00 × 1. Sub-Total **1610.00**. Header counter **3**. |
-| Actual Result | _Not executed_ |
-| Status | **Not Run** |
-| Evidence | — |
+| Actual Result | The cart still had **two** rows. The book row showed qty 2 and line total 20.00; the laptop remained 1590.00 × 1. Sub-Total **1610.00**, Total 1610.00. Header showed **Shopping cart (3)**. |
+| Status | **Pass** |
+| Evidence | `docs/screenshots/manual/TC-063_cart-duplicate-add.png` |
 | Linked defect | — |
 
 ---
@@ -1048,9 +1048,9 @@ on exact prices must be re-checked immediately before execution and recorded as 
 | Test Data | Laptop quantity 1 → 3 |
 | Test Steps | 1. Change the laptop quantity to **3**.<br>2. Click **Update shopping cart**.<br>3. Record the laptop line total, the book line total, the Sub-Total, and the header counter. |
 | Expected Result | Laptop line total **4770.00** (1590 × 3); book line total **20.00**; Sub-Total **4790.00**; header counter **5**. |
-| Actual Result | _Not executed_ |
-| Status | **Not Run** |
-| Evidence | — |
+| Actual Result | The laptop line updated to qty 3 and **4770.00**; the book remained at qty 2 and **20.00**. Sub-Total **4790.00**, Total 4790.00. Header showed **Shopping cart (5)**. |
+| Status | **Pass** |
+| Evidence | `docs/screenshots/manual/TC-064_cart-qty-updated.png` |
 | Linked defect | — |
 
 ---
@@ -1069,9 +1069,9 @@ on exact prices must be re-checked immediately before execution and recorded as 
 | Test Data | Remove the Computing and Internet row |
 | Test Steps | 1. Tick **Remove** on the book row.<br>2. Click **Update shopping cart**.<br>3. Record the remaining rows, the Sub-Total, and the header counter. |
 | Expected Result | Only the laptop row remains, at 1590.00 × 3 = **4770.00**. Sub-Total **4770.00**; header counter **3**. |
-| Actual Result | _Not executed_ |
-| Status | **Not Run** |
-| Evidence | — |
+| Actual Result | The book row disappeared; only the laptop remained at 1590.00 × 3 = **4770.00**. Sub-Total **4770.00**, Total 4770.00. Header showed **Shopping cart (3)**. |
+| Status | **Pass** |
+| Evidence | `docs/screenshots/manual/TC-065_cart-item-removed.png` |
 | Linked defect | — |
 
 ---
@@ -1090,11 +1090,11 @@ on exact prices must be re-checked immediately before execution and recorded as 
 | Test Data | Quantities `0`, `-1`, `abc`, `99999`; valid quantity `3` |
 | Test Steps | 1. Set the quantity to **0**, update, and record the result.<br>2. Set **-1**, update, and record the result.<br>3. Set **abc**, update, and record the result.<br>4. Set **99999**, update, and record the result.<br>5. Restore the quantity to **3** and update. |
 | Expected Result | Invalid input never produces a negative total or an error page. Zero or negative either removes the line or is rejected with a validation message; non-numeric input is rejected with a numeric-validation message; 99999 is either accepted or rejected with a stock/quantity message. Record the exact message and resulting quantity each time. |
-| Actual Result | _Not executed_ |
+| Actual Result | **Partially executed.** `0` removed the line and emptied the cart. `-1` was then entered on the empty cart, so that sub-step is **invalid** and must be retested with a populated line. `abc` reverted the field to the previous quantity 3 without changing totals. `99999` was rejected with **"The maximum quantity allowed for purchase is 10000."** No negative totals or error page were produced. |
 | Status | **Not Run** |
-| Evidence | — |
+| Evidence | `docs/screenshots/manual/TC-066_cart-invalid-qty.png` |
 | Linked defect | — |
-| Notes | Exploratory boundary case; the exact zero/negative policy must be recorded, not assumed. |
+| Notes | Retest `-1` with the laptop line present (qty 3), and capture the visible message for `abc` and `99999`. The saved screenshot shows the restored state, not the messages. |
 
 ---
 
@@ -1112,11 +1112,11 @@ on exact prices must be re-checked immediately before execution and recorded as 
 | Test Data | Discount code `INVALID10` · gift card code `INVALIDGIFT` |
 | Test Steps | 1. Expand **Discount codes**, enter `INVALID10`, and apply it.<br>2. Record the message and the Sub-Total.<br>3. Expand **Gift cards**, enter `INVALIDGIFT`, and apply it.<br>4. Record the message and the Sub-Total.<br>5. Log out, log back in, and open the cart. |
 | Expected Result | Both codes are rejected with an explicit error and the Sub-Total stays **4770.00**. After logging out and back in, the cart still contains the laptop at quantity 3 with the same total. |
-| Actual Result | _Not executed_ |
+| Actual Result | **Partially executed.** After both invalid codes the Sub-Total stayed **4770.00**, and after logging out and back in the cart still contained the laptop at qty 3. The discount attempt produced **"The coupon code you entered couldn't be applied to your order."** The gift-card attempt was reported with the **same coupon wording**, which would be incorrect for a gift card; reproduction in the Gift Cards field and a screenshot of both messages are pending. |
 | Status | **Not Run** |
-| Evidence | — |
+| Evidence | `docs/screenshots/manual/TC-067_cart-invalid-codes.png` |
 | Linked defect | — |
-| Notes | Exact error wording is recorded as observed; the invariant is that no discount or gift-card value is applied. |
+| Notes | The saved screenshot shows the post-login cart, not the error messages. If the gift-card field really returns the coupon message, it will be filed as a Low-severity wording defect. |
 
 ---
 
