@@ -335,6 +335,8 @@ TC-067 remains a Pass with this defect linked.
 | A price filter with zero matching products shows an empty product area and no no-results message | REQ-FLT-02 only requires the filter to return in-range products, which it does. The search page shows a message but the category filter does not; logged as a UX observation, not a defect |
 | A quantity of 0 or -1 silently removes the line, with no validation message | The cart shows the explicit empty state and no negative total is ever produced, which is the requirement (`REQ-CART-05`). Removal is a valid interpretation of a non-positive quantity |
 | A non-numeric quantity (`abc`) reverts to the previous value with no visible message | The value is rejected, the totals stay correct, and no error page appears. The missing feedback is a UX gap; `REQ-CART-05` only requires totals to remain valid |
+| Checkout accepts `!!` as a postal code and `abc` as a phone number | Assumption A6 asked for the exact rules to be verified. Only presence is enforced for these fields; the email format is validated. Recorded as an assumption correction, not a defect |
+| All shipping methods are priced 0.00 | Demo store configuration, not a calculation fault. TC-085 therefore verifies selectability and total consistency rather than price differentiation |
 
 ---
 
