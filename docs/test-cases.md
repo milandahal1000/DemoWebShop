@@ -4,7 +4,7 @@
 |---|---|
 | Project | Demo Web Shop — QA Portfolio (Manual + Selenium) |
 | Document | Manual Test Case Catalogue |
-| Version | 0.1 — Batch 1 (Registration + Authentication) |
+| Version | 0.4 — Batches 1–2 executed; Batch 3 written |
 | Author | Milan Dahal |
 | Date | 18 November 2026 |
 | Application | https://demowebshop.tricentis.com/ |
@@ -87,8 +87,8 @@ on exact prices must be re-checked immediately before execution and recorded as 
 | Catalog / navigation | TC-020 – TC-023 | Written (Batch 2) |
 | Product detail | TC-030 – TC-036 | Written (Batch 2) |
 | Search | TC-040 – TC-045 | Written (Batch 2) |
-| Sort / filter / paging | TC-050 – TC-055 | Pending Batch 3 |
-| Cart | TC-060 – TC-067 | Pending Batch 3 |
+| Sort / filter / paging | TC-050 – TC-055 | Written (Batch 3) |
+| Cart | TC-060 – TC-067 | Written (Batch 3) |
 | Checkout | TC-080 – TC-088 | Pending Batch 4 |
 | Orders | TC-090 – TC-092 | Pending Batch 4 |
 | Wishlist / compare | TC-100 – TC-103 | Pending Batch 5 |
@@ -102,15 +102,16 @@ on exact prices must be re-checked immediately before execution and recorded as 
 
 | Status | Count |
 |---|---:|
-| Total written | 31 |
+| Total written | 45 |
 | Passed | 26 |
 | Failed | 5 |
 | Blocked | 0 |
-| Not Run | 0 |
+| Not Run | 14 |
 | Confirmed defects | 5 |
 
 **Batch 1 complete:** 14 executed — 11 passed, 3 failed (TC-012 → BUG-001, TC-013 → BUG-002, TC-017 → BUG-003).
 **Batch 2 complete:** 17 executed — 15 passed, 2 failed (TC-033 → BUG-004, TC-044 → BUG-005). No Critical or High severity defects.
+**Batch 3 written:** 14 cases (sorting/filtering/paging and cart) awaiting execution. Cart baseline verified empty.
 
 ---
 
@@ -805,7 +806,321 @@ on exact prices must be re-checked immediately before execution and recorded as 
 
 ---
 
-## 10. Manual execution protocol
+## 10. Batch 3 — Sorting, filtering, paging
+
+> **Baseline (21 Nov 2026):** Books contains six products — Computing and Internet (10.00),
+> Copy of Computing and Internet EX (10.00), Fiction (24.00), Fiction EX (24.00),
+> Health Book (10.00), Science (51.00). Default page size is 8, so all six fit on one page.
+> Price ranges on Books are Under 25.00 (`price=-25`), 25.00–50.00 (`price=25-50`), and
+> Over 50.00 (`price=50-`). Assertions use this snapshot; do not hard-code it in automation.
+
+### TC-050 — Name and date sorts reorder the listing
+
+| Field | Value |
+|---|---|
+| Test Case ID | TC-050 |
+| Module | Sort / filter / paging |
+| Related scenario | SC-FLT-01, SC-FLT-02, SC-FLT-05 |
+| Test Case Title | Name A–Z, Name Z–A, and Created on reorder the Books listing |
+| Priority | High |
+| Automation candidate | Yes |
+| Preconditions | `/books` open |
+| Test Data | Sort options: Position, Name: A to Z (`orderby=5`), Name: Z to A (`orderby=6`), Created on (`orderby=15`) |
+| Test Steps | 1. Select **Name: A to Z** and record the product order.<br>2. Select **Name: Z to A** and record the order.<br>3. Select **Created on** and record the order.<br>4. Compare the A–Z and Z–A sequences. |
+| Expected Result | A–Z is alphabetical: Computing and Internet, Copy of Computing and Internet EX, Fiction, Fiction EX, Health Book, Science. Z–A is the exact reverse. All six products remain present in both. Created on produces a stable order that is recorded as observed. |
+| Actual Result | _Not executed_ |
+| Status | **Not Run** |
+| Evidence | — |
+| Linked defect | — |
+| Notes | Created on has no documented expected sequence in this project; record it and assert only that it is stable on reload. |
+
+---
+
+### TC-051 — Sort by price, low to high
+
+| Field | Value |
+|---|---|
+| Test Case ID | TC-051 |
+| Module | Sort / filter / paging |
+| Related scenario | SC-FLT-03 |
+| Test Case Title | Price: Low to High orders products by ascending price |
+| Priority | High |
+| Automation candidate | Yes |
+| Preconditions | `/books` open |
+| Test Data | Sort option Price: Low to High (`orderby=10`) |
+| Test Steps | 1. Select **Price: Low to High**.<br>2. Record each product name and price in display order.<br>3. Confirm all six products are still shown. |
+| Expected Result | Prices are non-decreasing: **10.00, 10.00, 10.00, 24.00, 24.00, 51.00**. All six products are present. Ties may appear in any order. |
+| Actual Result | _Not executed_ |
+| Status | **Not Run** |
+| Evidence | — |
+| Linked defect | — |
+
+---
+
+### TC-052 — Sort by price, high to low
+
+| Field | Value |
+|---|---|
+| Test Case ID | TC-052 |
+| Module | Sort / filter / paging |
+| Related scenario | SC-FLT-04 |
+| Test Case Title | Price: High to Low orders products by descending price |
+| Priority | High |
+| Automation candidate | Yes |
+| Preconditions | `/books` open |
+| Test Data | Sort option Price: High to Low (`orderby=11`) |
+| Test Steps | 1. Select **Price: High to Low**.<br>2. Record each product name and price in display order.<br>3. Confirm all six products are still shown. |
+| Expected Result | Prices are non-increasing: **51.00, 24.00, 24.00, 10.00, 10.00, 10.00**. All six products are present. Ties may appear in any order. |
+| Actual Result | _Not executed_ |
+| Status | **Not Run** |
+| Evidence | — |
+| Linked defect | — |
+
+---
+
+### TC-053 — Price filter ranges
+
+| Field | Value |
+|---|---|
+| Test Case ID | TC-053 |
+| Module | Sort / filter / paging |
+| Related scenario | SC-FLT-06, SC-FLT-07, SC-FLT-08 |
+| Test Case Title | Each Books price filter shows only products inside its range |
+| Priority | Medium |
+| Automation candidate | Yes |
+| Preconditions | `/books` open |
+| Test Data | Under 25.00 (`price=-25`), 25.00–50.00 (`price=25-50`), Over 50.00 (`price=50-`) |
+| Test Steps | 1. Apply **Under 25.00** and record products and prices.<br>2. Remove the filter, then apply **25.00 – 50.00** and record the result.<br>3. Remove the filter, then apply **Over 50.00** and record the result.<br>4. Confirm the active filter is visibly indicated each time. |
+| Expected Result | Under 25.00: five products, every price below 25.00 (10.00, 10.00, 10.00, 24.00, 24.00). 25.00–50.00: no matching products, so the no-results message is shown. Over 50.00: one product, Science at 51.00. The other products are excluded each time. |
+| Actual Result | _Not executed_ |
+| Status | **Not Run** |
+| Evidence | — |
+| Linked defect | — |
+| Notes | The 25.00–50.00 range is empty with the current catalog; that is a valid result, not a defect. The boundary products sit at 24.00 and 51.00, so exact inclusiveness at 25/50 cannot be observed. |
+
+---
+
+### TC-054 — Page size and pager
+
+| Field | Value |
+|---|---|
+| Test Case ID | TC-054 |
+| Module | Sort / filter / paging |
+| Related scenario | SC-FLT-09 |
+| Test Case Title | Changing the page size paginates the listing correctly |
+| Priority | Medium |
+| Automation candidate | Yes |
+| Preconditions | `/books` open; six products available |
+| Test Data | Display 4, 8, 12 per page (`pagesize`) |
+| Test Steps | 1. Set Display to **4**. Record page 1 and the pager links.<br>2. Open page 2 and record the products.<br>3. Set Display to **8**, then **12**, recording the product count and whether a pager is shown. |
+| Expected Result | With 4 per page: two pages, page 1 has four products and page 2 has two; the pager offers page 1 and 2. With 8 and 12 per page: all six products appear on one page and no pager is needed. |
+| Actual Result | _Not executed_ |
+| Status | **Not Run** |
+| Evidence | — |
+| Linked defect | — |
+| Notes | The pager appears only when the product count exceeds the page size. |
+
+---
+
+### TC-055 — Filter, sort, and page size combined
+
+| Field | Value |
+|---|---|
+| Test Case ID | TC-055 |
+| Module | Sort / filter / paging |
+| Related scenario | SC-FLT-10 |
+| Test Case Title | Filter, sort, and page size remain applied together |
+| Priority | Medium |
+| Automation candidate | Partial |
+| Preconditions | `/books` open |
+| Test Data | Under 25.00 filter · Price: High to Low · Display 4 |
+| Test Steps | 1. Apply **Under 25.00**.<br>2. Set sort to **Price: High to Low**.<br>3. Set Display to **4**.<br>4. Confirm the URL and the listing show all three settings.<br>5. Open page 2 and confirm the filter and sort still apply.<br>6. Remove the price filter and record whether sort and page size are retained. |
+| Expected Result | The listing shows only the five products under 25.00, in descending price (24.00, 24.00, 10.00, 10.00, 10.00), four on page 1 and one on page 2. The URL contains `price=-25`, `orderby=11`, and `pagesize=4`. Removing the filter restores all six products. |
+| Actual Result | _Not executed_ |
+| Status | **Not Run** |
+| Evidence | — |
+| Linked defect | — |
+| Notes | Record the exact filter-removal control and whether sort/page size survive it; either behaviour is acceptable if consistent. |
+
+---
+
+## 11. Batch 3 — Shopping cart
+
+> **Baseline (21 Nov 2026):** the cart was verified empty before this batch —
+> "Your Shopping Cart is empty!", header **Shopping cart (0)**, no checkout button.
+> TC-060 must be executed first, before any product is added.
+
+### TC-060 — Empty cart state
+
+| Field | Value |
+|---|---|
+| Test Case ID | TC-060 |
+| Module | Shopping cart |
+| Related scenario | SC-CART-06 |
+| Test Case Title | Empty cart shows the empty state and no checkout path |
+| Priority | Medium |
+| Automation candidate | Yes |
+| Preconditions | Signed in; no items in the cart |
+| Test Data | `/cart` |
+| Test Steps | 1. Open the cart.<br>2. Record the header counter, the page message, and the number of product rows.<br>3. Confirm whether Update, Checkout, or discount/gift-card controls are available. |
+| Expected Result | Header shows **Shopping cart (0)**. The page shows **"Your Shopping Cart is empty!"**, no product rows, and no checkout or update action. A way back to the catalog is offered. |
+| Actual Result | _Not executed_ |
+| Status | **Not Run** |
+| Evidence | — |
+| Linked defect | — |
+
+---
+
+### TC-061 — Add one product and confirm persistence
+
+| Field | Value |
+|---|---|
+| Test Case ID | TC-061 |
+| Module | Shopping cart |
+| Related scenario | SC-CART-01, SC-CART-12 |
+| Test Case Title | Adding a product creates one correct row that survives navigation and refresh |
+| Priority | Critical |
+| Automation candidate | Yes |
+| Preconditions | TC-060 executed; cart empty; `/books` open |
+| Test Data | Computing and Internet · 10.00 · quantity 1 |
+| Test Steps | 1. Click **Add to cart** on the Computing and Internet card.<br>2. Record the header counter and the flyout.<br>3. Open the cart and record unit price, quantity, line total, and Sub-Total.<br>4. Navigate to the home page, return to the cart, and refresh.<br>5. Confirm the row is still present and unchanged. |
+| Expected Result | Counter changes 0 → 1. The cart shows one row: **Computing and Internet**, unit **10.00**, qty **1**, line total **10.00**, Sub-Total **10.00**. The row persists after navigation and refresh. |
+| Actual Result | _Not executed_ |
+| Status | **Not Run** |
+| Evidence | — |
+| Linked defect | — |
+
+---
+
+### TC-062 — Add a second product and verify the combined subtotal
+
+| Field | Value |
+|---|---|
+| Test Case ID | TC-062 |
+| Module | Shopping cart |
+| Related scenario | SC-CART-02 |
+| Test Case Title | Two different products produce two rows and a correct combined subtotal |
+| Priority | High |
+| Automation candidate | Yes |
+| Preconditions | TC-061 executed; one book row in the cart |
+| Test Data | 14.1-inch Laptop · 1590.00 · quantity 1 |
+| Test Steps | 1. Open `/141-inch-laptop`.<br>2. Leave quantity at 1 and click **Add to cart**.<br>3. Open the cart and record both rows and the Sub-Total. |
+| Expected Result | Two rows: Computing and Internet (10.00 × 1) and 14.1-inch Laptop (1590.00 × 1). Sub-Total **1600.00**. Header counter **2**. |
+| Actual Result | _Not executed_ |
+| Status | **Not Run** |
+| Evidence | — |
+| Linked defect | — |
+
+---
+
+### TC-063 — Adding the same product again increases its quantity
+
+| Field | Value |
+|---|---|
+| Test Case ID | TC-063 |
+| Module | Shopping cart |
+| Related scenario | SC-CART-03 |
+| Test Case Title | Duplicate add merges into one row with an increased quantity |
+| Priority | High |
+| Automation candidate | Yes |
+| Preconditions | TC-062 executed; two rows in the cart |
+| Test Data | Computing and Internet added a second time |
+| Test Steps | 1. Return to `/books`.<br>2. Click **Add to cart** on Computing and Internet again.<br>3. Open the cart and record the number of rows, the book quantity, and the Sub-Total. |
+| Expected Result | Still **two** rows, not three. The book row shows qty **2**, line total **20.00**; the laptop remains 1590.00 × 1. Sub-Total **1610.00**. Header counter **3**. |
+| Actual Result | _Not executed_ |
+| Status | **Not Run** |
+| Evidence | — |
+| Linked defect | — |
+
+---
+
+### TC-064 — Update the quantity and recalculate totals
+
+| Field | Value |
+|---|---|
+| Test Case ID | TC-064 |
+| Module | Shopping cart |
+| Related scenario | SC-CART-04 |
+| Test Case Title | Updating a line quantity recalculates the line total and subtotal |
+| Priority | High |
+| Automation candidate | Yes |
+| Preconditions | TC-063 executed; book qty 2, laptop qty 1 |
+| Test Data | Laptop quantity 1 → 3 |
+| Test Steps | 1. Change the laptop quantity to **3**.<br>2. Click **Update shopping cart**.<br>3. Record the laptop line total, the book line total, the Sub-Total, and the header counter. |
+| Expected Result | Laptop line total **4770.00** (1590 × 3); book line total **20.00**; Sub-Total **4790.00**; header counter **5**. |
+| Actual Result | _Not executed_ |
+| Status | **Not Run** |
+| Evidence | — |
+| Linked defect | — |
+
+---
+
+### TC-065 — Remove a line and recalculate totals
+
+| Field | Value |
+|---|---|
+| Test Case ID | TC-065 |
+| Module | Shopping cart |
+| Related scenario | SC-CART-05 |
+| Test Case Title | Removing one line deletes only that row and recalculates the subtotal |
+| Priority | High |
+| Automation candidate | Yes |
+| Preconditions | TC-064 executed; book qty 2, laptop qty 3 |
+| Test Data | Remove the Computing and Internet row |
+| Test Steps | 1. Tick **Remove** on the book row.<br>2. Click **Update shopping cart**.<br>3. Record the remaining rows, the Sub-Total, and the header counter. |
+| Expected Result | Only the laptop row remains, at 1590.00 × 3 = **4770.00**. Sub-Total **4770.00**; header counter **3**. |
+| Actual Result | _Not executed_ |
+| Status | **Not Run** |
+| Evidence | — |
+| Linked defect | — |
+
+---
+
+### TC-066 — Quantity validation boundaries
+
+| Field | Value |
+|---|---|
+| Test Case ID | TC-066 |
+| Module | Shopping cart |
+| Related scenario | SC-CART-07, SC-CART-08, SC-CART-09, SC-CART-10 |
+| Test Case Title | Zero, negative, non-numeric, and very large quantities are handled safely |
+| Priority | Medium |
+| Automation candidate | Yes |
+| Preconditions | TC-065 executed; laptop qty 3 is the only line |
+| Test Data | Quantities `0`, `-1`, `abc`, `99999`; valid quantity `3` |
+| Test Steps | 1. Set the quantity to **0**, update, and record the result.<br>2. Set **-1**, update, and record the result.<br>3. Set **abc**, update, and record the result.<br>4. Set **99999**, update, and record the result.<br>5. Restore the quantity to **3** and update. |
+| Expected Result | Invalid input never produces a negative total or an error page. Zero or negative either removes the line or is rejected with a validation message; non-numeric input is rejected with a numeric-validation message; 99999 is either accepted or rejected with a stock/quantity message. Record the exact message and resulting quantity each time. |
+| Actual Result | _Not executed_ |
+| Status | **Not Run** |
+| Evidence | — |
+| Linked defect | — |
+| Notes | Exploratory boundary case; the exact zero/negative policy must be recorded, not assumed. |
+
+---
+
+### TC-067 — Invalid codes and cart persistence after re-login
+
+| Field | Value |
+|---|---|
+| Test Case ID | TC-067 |
+| Module | Shopping cart |
+| Related scenario | SC-CART-11, SC-CART-12, SC-SES-02 |
+| Test Case Title | Invalid discount/gift-card codes do not change totals, and the cart survives re-login |
+| Priority | High |
+| Automation candidate | Partial |
+| Preconditions | TC-066 executed; laptop qty restored to 3; Sub-Total 4770.00 |
+| Test Data | Discount code `INVALID10` · gift card code `INVALIDGIFT` |
+| Test Steps | 1. Expand **Discount codes**, enter `INVALID10`, and apply it.<br>2. Record the message and the Sub-Total.<br>3. Expand **Gift cards**, enter `INVALIDGIFT`, and apply it.<br>4. Record the message and the Sub-Total.<br>5. Log out, log back in, and open the cart. |
+| Expected Result | Both codes are rejected with an explicit error and the Sub-Total stays **4770.00**. After logging out and back in, the cart still contains the laptop at quantity 3 with the same total. |
+| Actual Result | _Not executed_ |
+| Status | **Not Run** |
+| Evidence | — |
+| Linked defect | — |
+| Notes | Exact error wording is recorded as observed; the invariant is that no discount or gift-card value is applied. |
+
+---
+
+## 12. Manual execution protocol
 
 For every case:
 
