@@ -103,15 +103,15 @@ on exact prices must be re-checked immediately before execution and recorded as 
 | Status | Count |
 |---|---:|
 | Total written | 57 |
-| Passed | 51 |
+| Passed | 52 |
 | Failed | 5 |
 | Blocked | 0 |
-| Not Run | 1 |
+| Not Run | 0 |
 | Confirmed defects | 6 |
 
 **Batch 1 complete:** 14 executed — 11 passed, 3 failed (TC-012 → BUG-001, TC-013 → BUG-002, TC-017 → BUG-003).
 **Batch 2 complete:** 17 executed — 15 passed, 2 failed (TC-033 → BUG-004, TC-044 → BUG-005). No Critical or High severity defects.
-**Batch 4 executed:** 11 passed, 1 pending completion evidence (TC-081 guest checkout). Orders **2420115** (COD, 17.00) and **2420116** (Check / Money Order, 15.00) are both Pending.
+**Batch 4 complete:** 12 executed — 12 passed. Account orders **2420115** (COD, 17.00) and **2420116** (Check / Money Order, 15.00) are both Pending; guest order **2420136** completed without registration.
 **Batch 3 complete:** 14 executed — 14 passed. Sorting, filtering, paging, empty-cart state, add/update/remove, quantity boundaries, and invalid-code handling all behaved correctly. BUG-006 (gift-card message wording) was raised from TC-067; the case's functional assertions passed.
 
 ---
@@ -1171,11 +1171,11 @@ on exact prices must be re-checked immediately before execution and recorded as 
 | Test Data | Computing and Internet · 10.00 · qty 1 · guest email `qa.guest.batch4@example.com` · United States / California / Testville / 1 Test Street / 90210 / 5551234567 · Ground · Check / Money Order |
 | Test Steps | 1. Add Computing and Internet to the cart.<br>2. Tick **I agree with the terms of service** and click **Checkout**.<br>3. On **Billing address**, fill first name, last name, email, country, state, city, address 1, zip, phone; click **Continue**.<br>4. On **Shipping address**, confirm the entered address is preselected; click **Continue**.<br>5. Select **Ground** and continue.<br>6. Select **Check / Money Order** and continue.<br>7. Read the payment-information text and continue.<br>8. On **Confirm order**, check the totals and click **Confirm**. |
 | Expected Result | No account is required at any step. Each step advances in order, the shipping step reuses the billing address without retyping, and the completed page shows **"Thank you"**, **"Your order has been successfully processed!"** and **"Order number: <n>"**. The cart empties and the total is **15.00** (10.00 goods + 5.00 payment fee). |
-| Actual Result | **Partially executed.** A signed-out visitor added Computing and Internet and reached **Confirm order** without registering: billing accepted the guest email `qa.guest.batch4@example.com`, shipping reused the same address, and the summary showed **Check / Money Order**, **Ground**, Sub-Total 10.00, Shipping 0.00, payment fee 5.00, Tax 0.00, **Total 15.00**. The completed page and guest order number were not captured, so completion is still unconfirmed. |
-| Status | **Not Run** |
-| Evidence | `docs/screenshots/manual/TC-081_guest-confirm-order.png` |
+| Actual Result | A signed-out visitor added Computing and Internet and completed checkout without registering: billing accepted the guest email `qa.guest.batch4@example.com`, shipping reused the same address, the summary showed **Check / Money Order**, **Ground**, Sub-Total 10.00, Shipping 0.00, payment fee 5.00, Tax 0.00, **Total 15.00**, and confirming produced guest order **2420136**. No account was created. |
+| Status | **Pass** |
+| Evidence | `docs/screenshots/manual/TC-081_guest-confirm-order.png`<br>Guest order **2420136** confirmed by the tester |
 | Linked defect | — |
-| Notes | The screenshot captures the Confirm order step, not the completed page; completion and the guest order number are still needed. The file was renamed from `TC-081_guest-completed.png` to match its content. |
+| Notes | The screenshot captures the Confirm order step; the completed page was not captured. A guest order is tied to the guest customer, so it correctly does not appear in My account → Orders. The file was renamed from `TC-081_guest-completed.png` to match its content. |
 
 ---
 
