@@ -274,6 +274,12 @@ can detect them.
 This is a robustness defect, not a confirmed injection vulnerability: the payload did not
 execute and no stack trace was disclosed. A deeper security assessment is out of scope.
 
+The same error page is returned for a URL path containing `<` — for example
+`/orderdetails/<id>` ends at `/errorpage.htm?aspxerrorpath=/orderdetails/<id>` with HTTP 200,
+while `/orderdetails/abc` correctly returns the 404 page. This points at a shared input
+handling path rather than search-specific code; it is logged as an observation rather than a
+second defect.
+
 ---
 
 ### BUG-006 — Gift-card rejection message refers to a coupon code
@@ -337,6 +343,9 @@ TC-067 remains a Pass with this defect linked.
 | A non-numeric quantity (`abc`) reverts to the previous value with no visible message | The value is rejected, the totals stay correct, and no error page appears. The missing feedback is a UX gap; `REQ-CART-05` only requires totals to remain valid |
 | Checkout accepts `!!` as a postal code and `abc` as a phone number | Assumption A6 asked for the exact rules to be verified. Only presence is enforced for these fields; the email format is validated. Recorded as an assumption correction, not a defect |
 | All shipping methods are priced 0.00 | Demo store configuration, not a calculation fault. TC-085 therefore verifies selectability and total consistency rather than price differentiation |
+| Payment information ends with **"P.S. You can edit this text from admin panel."**, and the login page carries a similar admin note | Demo placeholder content configured through the admin panel; the flows work. Cosmetic content artifact, not raised as a defect |
+| The billing address book showed the same address twice after repeated checkout submissions | Test-data artifact from submitting the billing step more than once during TC-083/TC-084; not reproducible as a standalone application fault |
+| A URL containing `<` such as `/orderdetails/<id>` returns the internal error page | Same angle-bracket class as BUG-005, documented under that defect rather than raised separately. Non-numeric ids such as `/orderdetails/abc` correctly return the 404 page |
 
 ---
 

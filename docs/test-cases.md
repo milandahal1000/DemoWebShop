@@ -4,7 +4,7 @@
 |---|---|
 | Project | Demo Web Shop — QA Portfolio (Manual + Selenium) |
 | Document | Manual Test Case Catalogue |
-| Version | 0.5 — Batches 1–3 executed; Batch 4 written |
+| Version | 0.6 — Batches 1–4 executed |
 | Author | Milan Dahal |
 | Date | 18 November 2026 |
 | Application | https://demowebshop.tricentis.com/ |
@@ -89,8 +89,8 @@ on exact prices must be re-checked immediately before execution and recorded as 
 | Search | TC-040 – TC-045 | Written (Batch 2) |
 | Sort / filter / paging | TC-050 – TC-055 | Written (Batch 3) |
 | Cart | TC-060 – TC-067 | Written (Batch 3) |
-| Checkout | TC-080 – TC-088 | Written (Batch 4) |
-| Orders | TC-090 – TC-092 | Written (Batch 4) |
+| Checkout | TC-080 – TC-088 | Executed (Batch 4) |
+| Orders | TC-090 – TC-092 | Executed (Batch 4) |
 | Wishlist / compare | TC-100 – TC-103 | Pending Batch 5 |
 | My account | TC-110 – TC-114 | Pending Batch 5 |
 | Contact / newsletter | TC-120 – TC-123 | Pending Batch 5 |
@@ -103,15 +103,15 @@ on exact prices must be re-checked immediately before execution and recorded as 
 | Status | Count |
 |---|---:|
 | Total written | 57 |
-| Passed | 40 |
+| Passed | 51 |
 | Failed | 5 |
 | Blocked | 0 |
-| Not Run | 12 |
+| Not Run | 1 |
 | Confirmed defects | 6 |
 
 **Batch 1 complete:** 14 executed — 11 passed, 3 failed (TC-012 → BUG-001, TC-013 → BUG-002, TC-017 → BUG-003).
 **Batch 2 complete:** 17 executed — 15 passed, 2 failed (TC-033 → BUG-004, TC-044 → BUG-005). No Critical or High severity defects.
-**Batch 4 written:** 12 cases (checkout and orders) awaiting execution; the checkout rules above were verified against the live store first.
+**Batch 4 executed:** 11 passed, 1 pending completion evidence (TC-081 guest checkout). Orders **2420115** (COD, 17.00) and **2420116** (Check / Money Order, 15.00) are both Pending.
 **Batch 3 complete:** 14 executed — 14 passed. Sorting, filtering, paging, empty-cart state, add/update/remove, quantity boundaries, and invalid-code handling all behaved correctly. BUG-006 (gift-card message wording) was raised from TC-067; the case's functional assertions passed.
 
 ---
@@ -1149,9 +1149,9 @@ on exact prices must be re-checked immediately before execution and recorded as 
 | Test Data | `/cart`, `/onepagecheckout` |
 | Test Steps | 1. Open the cart and confirm the empty message.<br>2. Navigate directly to `/onepagecheckout`.<br>3. Record the final URL and the page shown.<br>4. Try the browser Back button and confirm no billing form is reachable. |
 | Expected Result | `/onepagecheckout` redirects to `/cart`, the page shows **"Your Shopping Cart is empty!"**, no billing step or checkout controls are exposed, and no order can be started. |
-| Actual Result | _Not executed_ |
-| Status | **Not Run** |
-| Evidence | — |
+| Actual Result | `/onepagecheckout` redirected to `/cart`. The page showed header **Shopping cart (0)**, the message **"Your Shopping Cart is empty!"**, the checkout progress indicator with only **Cart** active, and no Update or Checkout controls. No billing form was reachable. |
+| Status | **Pass** |
+| Evidence | `docs/screenshots/manual/TC-080_checkout-empty-cart.png` |
 | Linked defect | — |
 | Notes | Direct URL navigation is the stronger check because the cart page also hides the Checkout button when empty. Verified 21 Nov 2026: the redirect lands on `/cart` with the Shopping Cart title. |
 
@@ -1171,11 +1171,11 @@ on exact prices must be re-checked immediately before execution and recorded as 
 | Test Data | Computing and Internet · 10.00 · qty 1 · guest email `qa.guest.batch4@example.com` · United States / California / Testville / 1 Test Street / 90210 / 5551234567 · Ground · Check / Money Order |
 | Test Steps | 1. Add Computing and Internet to the cart.<br>2. Tick **I agree with the terms of service** and click **Checkout**.<br>3. On **Billing address**, fill first name, last name, email, country, state, city, address 1, zip, phone; click **Continue**.<br>4. On **Shipping address**, confirm the entered address is preselected; click **Continue**.<br>5. Select **Ground** and continue.<br>6. Select **Check / Money Order** and continue.<br>7. Read the payment-information text and continue.<br>8. On **Confirm order**, check the totals and click **Confirm**. |
 | Expected Result | No account is required at any step. Each step advances in order, the shipping step reuses the billing address without retyping, and the completed page shows **"Thank you"**, **"Your order has been successfully processed!"** and **"Order number: <n>"**. The cart empties and the total is **15.00** (10.00 goods + 5.00 payment fee). |
-| Actual Result | _Not executed_ |
+| Actual Result | **Partially executed.** A signed-out visitor added Computing and Internet and reached **Confirm order** without registering: billing accepted the guest email `qa.guest.batch4@example.com`, shipping reused the same address, and the summary showed **Check / Money Order**, **Ground**, Sub-Total 10.00, Shipping 0.00, payment fee 5.00, Tax 0.00, **Total 15.00**. The completed page and guest order number were not captured, so completion is still unconfirmed. |
 | Status | **Not Run** |
-| Evidence | — |
+| Evidence | `docs/screenshots/manual/TC-081_guest-confirm-order.png` |
 | Linked defect | — |
-| Notes | Guest capability is implicit in this theme — there is no "Checkout as guest" button. Signing out before this case avoids merging the guest cart into the account cart. |
+| Notes | The screenshot captures the Confirm order step, not the completed page; completion and the guest order number are still needed. The file was renamed from `TC-081_guest-completed.png` to match its content. |
 
 ---
 
@@ -1193,11 +1193,11 @@ on exact prices must be re-checked immediately before execution and recorded as 
 | Test Data | Signed-in test account |
 | Test Steps | 1. From the cart, tick the terms checkbox and click **Checkout**.<br>2. Record whether any login or registration prompt appears.<br>3. Record whether **Email** is prefilled with the account address and whether it is editable.<br>4. Complete the remaining billing fields and click **Continue**.<br>5. On **Shipping address**, confirm the entered address is available and preselected. |
 | Expected Result | Checkout opens directly at **Billing address** with no login prompt and no guest/register chooser. **Email** is prefilled with the signed-in account address. The billing address is carried into the shipping step, so the address is not re-entered. |
-| Actual Result | _Not executed_ |
-| Status | **Not Run** |
-| Evidence | — |
+| Actual Result | No login or registration prompt appeared. Checkout opened at **Billing address** with an address-book selector containing the saved **QA Portfolio, Test Street, Testville, California !!, United States** entry, and Continue advanced to Shipping address. The account email was echoed on the Confirm order page. The address book showed the same address twice, a result of repeated test submissions. |
+| Status | **Pass** |
+| Evidence | `docs/screenshots/manual/TC-082_billing-prefilled.png` |
 | Linked defect | — |
-| Notes | The test account had no saved address before this batch, so the first run also records how the address is offered on the shipping step. |
+| Notes | The email is not displayed while an address-book entry is selected; it appears in the confirm summary. Duplicate address entries are a test-data artifact, not a defect. |
 
 ---
 
@@ -1215,9 +1215,9 @@ on exact prices must be re-checked immediately before execution and recorded as 
 | Test Data | All fields empty |
 | Test Steps | 1. Click **Continue** without entering anything.<br>2. Record every message and where it appears.<br>3. Confirm the flow does not advance to shipping. |
 | Expected Result | Progression is blocked and eight field messages appear: **"First name is required."**, **"Last name is required."**, **"Email is required."**, **"Country is required."**, **"City is required"**, **"Street address is required"**, **"Zip / postal code is required"**, **"Phone is required"**. |
-| Actual Result | _Not executed_ |
-| Status | **Not Run** |
-| Evidence | — |
+| Actual Result | Progression was blocked. Eight messages appeared: **First name is required.**, **Last name is required.**, **Email is required.**, **Country is required.**, **City is required**, **Street address is required**, **Zip / postal code is required**, **Phone is required**. Steps 2–6 stayed greyed out. |
+| Status | **Pass** |
+| Evidence | `docs/screenshots/manual/TC-083_required-fields.png` |
 | Linked defect | — |
 | Notes | Messages are recorded verbatim, including the inconsistent full stops. Company, Address 2, Fax, and State / province are not required. |
 
@@ -1237,9 +1237,9 @@ on exact prices must be re-checked immediately before execution and recorded as 
 | Test Data | Email `not-an-email`; then zip `!!` and phone `abc` |
 | Test Steps | 1. Enter every field correctly except **Email**, using `not-an-email`; click **Continue**.<br>2. Record the message and confirm the step does not advance.<br>3. Correct the email, set **Zip / postal code** to `!!` and **Phone** to `abc`; click **Continue**.<br>4. Record whether the step advances. |
 | Expected Result | The malformed email is rejected with **"Wrong email"** and the step stays open. With a valid email, the non-numeric zip and phone are accepted because this build enforces presence only, not format. The exact outcome is recorded as the verified rule set. |
-| Actual Result | _Not executed_ |
-| Status | **Not Run** |
-| Evidence | — |
+| Actual Result | `not-an-email` was rejected with **"Wrong email"** and the step stayed open. After correcting the email, the zip `!!` and phone `abc` were accepted and the flow advanced to Shipping address with the saved address shown as **"QA Portfolio, Test Street, Testville !!"**. The Confirm order page later displayed **Phone: abc** and **California !!**, confirming that only presence is enforced for those fields. |
+| Status | **Pass** |
+| Evidence | `docs/screenshots/manual/TC-084_invalid-email.png`<br>`docs/screenshots/manual/TC-084_zip-phone-accepted.png` |
 | Linked defect | — |
 | Notes | Assumption A6 in the RTM is corrected by this result: postal-code and phone format validation do not exist. Recorded as an assumption correction and a UX observation, not a defect, because REQ-CHK-05 asked for the rules to be verified. |
 
@@ -1259,11 +1259,11 @@ on exact prices must be re-checked immediately before execution and recorded as 
 | Test Data | Ground · Next Day Air · 2nd Day Air |
 | Test Steps | 1. Record every method and its displayed price.<br>2. Select **Next Day Air**, then **2nd Day Air**, then **Ground**, recording the shipping line and order total each time.<br>3. Continue and confirm the selected method is echoed on **Confirm order**. |
 | Expected Result | All three methods — **Ground**, **Next Day Air**, **2nd Day Air** — are offered at **0.00**. The Shipping line stays **0.00** and the order total is unchanged whichever method is selected. The chosen method (Ground) appears on the confirmation step as **"Shipping: (Ground) 0.00"**. |
-| Actual Result | _Not executed_ |
-| Status | **Not Run** |
-| Evidence | — |
+| Actual Result | All three options — **Ground (0.00)**, **Next Day Air (0.00)** and **2nd Day Air (0.00)** — were offered. Selecting them kept Shipping at 0.00. The run continued with **2nd Day Air**, and Confirm order showed **Shipping: (2nd Day Air) 0.00** with the total unchanged at 17.00 after the COD fee. |
+| Status | **Pass** |
+| Evidence | `docs/screenshots/manual/TC-085_shipping-methods.png` |
 | Linked defect | — |
-| Notes | All rates are configured at zero in this demo, so the case verifies selectability and total consistency, not price differentiation. A non-zero rate would be required to test the calculation. |
+| Notes | The run selected 2nd Day Air rather than Ground; the selection was echoed correctly. All rates are zero in this store. |
 
 ---
 
@@ -1281,9 +1281,9 @@ on exact prices must be re-checked immediately before execution and recorded as 
 | Test Data | Cash On Delivery (COD) · fee 7.00 |
 | Test Steps | 1. At **Payment method**, select **Cash On Delivery (COD) (7.00)** and continue.<br>2. Continue through **Payment information**.<br>3. On **Confirm order**, record Sub-Total, Shipping, Payment method additional fee, Tax, and Total.<br>4. Click **Confirm**.<br>5. Record the confirmation heading and order number. |
 | Expected Result | Payment information needs no extra input. The confirmation step shows **Sub-Total 10.00**, **Shipping 0.00**, **Payment method additional fee 7.00**, **Tax 0.00**, **Total 17.00**. Confirming shows **"Your order has been successfully processed!"** with an order number, and the cart becomes empty. |
-| Actual Result | _Not executed_ |
-| Status | **Not Run** |
-| Evidence | — |
+| Actual Result | Confirm order showed Sub-Total **10.00**, Shipping **(2nd Day Air) 0.00**, Payment method additional fee **7.00**, Tax **0.00**, Total **17.00**. Confirming produced **"Your order has been successfully processed!"**, order number **2420115**, a *Click here for order details* link and a Continue button. The cart emptied. |
+| Status | **Pass** |
+| Evidence | `docs/screenshots/manual/TC-086_confirm-cod.png`<br>`docs/screenshots/manual/TC-086_order-completed.png` |
 | Linked defect | — |
 | Notes | Record the order number — TC-090 and TC-091 use it. COD fee verified as 7.00 on 21 Nov 2026. |
 
@@ -1303,11 +1303,11 @@ on exact prices must be re-checked immediately before execution and recorded as 
 | Test Data | Check / Money Order · fee 5.00 |
 | Test Steps | 1. Add Computing and Internet again and proceed through checkout.<br>2. Select **Check / Money Order (5.00)** and continue.<br>3. Read and record the **Payment information** text.<br>4. Record the totals on **Confirm order** and click **Confirm**.<br>5. Record the order number. |
 | Expected Result | Payment information displays the postal address for cheques and money orders — **Tricentis GmbH, Leonard-Bernstein-Straße 10, 1220 Vienna, Austria** — plus the note that cheque orders may be held up to 10 days. Totals are **Sub-Total 10.00**, **Shipping 0.00**, **Payment fee 5.00**, **Tax 0.00**, **Total 15.00**. The confirmation page shows an order number. |
-| Actual Result | _Not executed_ |
-| Status | **Not Run** |
-| Evidence | — |
+| Actual Result | Payment information displayed the cheque/money-order address **Tricentis GmbH, Leonard-Bernstein-Straße 10, 1220 Vienna, Austria** and the 10-day clearing notice, followed by **"P.S. You can edit this text from admin panel."** The order completed with number **2420116**; the details page confirmed Sub-Total 10.00, Shipping 0.00, fee **5.00**, Tax 0.00, Total **15.00**. |
+| Status | **Pass** |
+| Evidence | `docs/screenshots/manual/TC-087_payment-info.png`<br>`docs/screenshots/manual/TC-087_order-completed.png` |
 | Linked defect | — |
-| Notes | Record the order number — TC-090 and TC-091 use it. Payment fee verified as 5.00 on 21 Nov 2026. |
+| Notes | The trailing P.S. line is demo placeholder text and is logged as an observation, not a defect. |
 
 ---
 
@@ -1325,9 +1325,9 @@ on exact prices must be re-checked immediately before execution and recorded as 
 | Test Data | Cart with one item |
 | Test Steps | 1. On the cart, leave **I agree with the terms of service** unticked and click **Checkout**.<br>2. Record the dialog text and whether the page advances.<br>3. Tick the box and click **Checkout** again. |
 | Expected Result | The first attempt shows **"Please accept the terms of service before the next step."** and the page stays on the cart. After ticking the box, checkout opens at **Billing address**. |
-| Actual Result | _Not executed_ |
-| Status | **Not Run** |
-| Evidence | — |
+| Actual Result | Clicking Checkout with the box unticked opened a **Terms of service** dialog reading **"Please accept the terms of service before the next step."** and the page stayed on the cart. Ticking the box allowed checkout to open at Billing address. |
+| Status | **Pass** |
+| Evidence | `docs/screenshots/manual/TC-088_tos-warning.png` |
 | Linked defect | — |
 | Notes | The gate is on the cart page; there is no terms checkbox on the Confirm order step. |
 
@@ -1349,11 +1349,11 @@ on exact prices must be re-checked immediately before execution and recorded as 
 | Test Data | The two order numbers recorded in TC-086 and TC-087 |
 | Test Steps | 1. Open **My account → Orders**.<br>2. Record every column label and row.<br>3. Match each order number to its order.<br>4. Confirm the totals are **17.00** and **15.00** and the status is **Pending**. |
 | Expected Result | Both orders are listed. Each row shows its order number, status **Pending**, and total — **17.00** for the COD order and **15.00** for the Check / Money Order order — with a control that opens the details. |
-| Actual Result | _Not executed_ |
-| Status | **Not Run** |
-| Evidence | — |
+| Actual Result | The Orders page listed both orders newest first: **2420116 — Pending — 11/22/2026 10:07:31 AM — 15.00** and **2420115 — Pending — 11/22/2026 10:04:57 AM — 17.00**, each with a **Details** button. |
+| Status | **Pass** |
+| Evidence | `docs/screenshots/manual/TC-090_order-history.png` |
 | Linked defect | — |
-| Notes | Record the exact column labels on the first run; the empty account showed **"No orders"** before this batch. |
+| Notes | Rows are cards rather than a table; the labels are Order status, Order Date, and Order Total. |
 
 ---
 
@@ -1371,11 +1371,11 @@ on exact prices must be re-checked immediately before execution and recorded as 
 | Test Data | Both orders from TC-086 and TC-087 |
 | Test Steps | 1. Open the COD order's details.<br>2. Record order number, date, status, and total.<br>3. Compare the billing and shipping addresses with the data entered.<br>4. Confirm the payment method, shipping method, product, quantity, and every total line.<br>5. Repeat for the Check / Money Order order. |
 | Expected Result | Each details page shows **Order #<n>**, the current date, **Order Status: Pending**, and **Order Total**. Addresses match what was entered, payment and shipping methods match the selection, and the totals match the confirmation page: COD **17.00** (fee 7.00) and Check / Money Order **15.00** (fee 5.00). A **Print PDF Invoice** link is present. |
-| Actual Result | _Not executed_ |
-| Status | **Not Run** |
-| Evidence | — |
+| Actual Result | Both details pages matched the orders. **2420115:** 22 Nov 2026, Pending, 17.00, same billing and shipping address (including Phone `abc` and `California !!`), Cash On Delivery (COD), 2nd Day Air, Computing and Internet 10.00 × 1, Sub-Total 10.00, Shipping 0.00, fee 7.00, Tax 0.00. **2420116:** 22 Nov 2026, Pending, 15.00, Check / Money Order, Ground, fee 5.00. Each page had **PDF Invoice**, **Print**, and **Re-order** controls. |
+| Status | **Pass** |
+| Evidence | `docs/screenshots/manual/TC-091_order-details-cod.png`<br>`docs/screenshots/manual/TC-091_order-details-check.png` |
 | Linked defect | — |
-| Notes | The layout was verified on a separate order on 21 Nov 2026: product table with Name / Price / Quantity / Total, then Sub-Total, Shipping, Payment method additional fee, Tax, and Order Total. |
+| Notes | The page offers separate PDF Invoice and Print controls, not a single "Print PDF Invoice" link. |
 
 ---
 
@@ -1393,11 +1393,11 @@ on exact prices must be re-checked immediately before execution and recorded as 
 | Test Data | `/customer/orders`, `/orderdetails/<order number>` |
 | Test Steps | 1. Sign out.<br>2. Navigate to `/customer/orders` and record the URL.<br>3. Navigate to `/orderdetails/<order number>` and record the URL.<br>4. Sign in from the redirected login page and confirm the original page opens. |
 | Expected Result | Both URLs redirect to `/login?ReturnUrl=...` and no order data is shown to the signed-out visitor. After signing in, the requested page loads. |
-| Actual Result | _Not executed_ |
-| Status | **Not Run** |
-| Evidence | — |
+| Actual Result | Signed out, `/customer/orders` redirected to **`/login?ReturnUrl=%2fcustomer%2forders`**, and `/orderdetails/2420115` redirected to **`/login?ReturnUrl=%2forderdetails%2f2420115`**; no order data was shown. The saved order-details screenshot used the literal placeholder `<id>`, which produced the internal error page instead of a redirect and is not valid evidence for this case. |
+| Status | **Pass** |
+| Evidence | `docs/screenshots/manual/TC-092_orders-redirect.png`<br>Order-details redirect verified against `/orderdetails/2420115`; corrected screenshot pending |
 | Linked defect | — |
-| Notes | Verified 21 Nov 2026: both URLs return the login page with the encoded `ReturnUrl`. Signing in after this case restores the session for later batches. |
+| Notes | The literal `<id>` URL returning the internal error page is the same angle-bracket class as BUG-005 and is logged as an observation. A corrected order-details screenshot (`TC-092_orderdetails-redirect.png`) is requested. |
 
 ---
 

@@ -85,3 +85,20 @@ TC-015_protected-redirect.png
 | TC-065 | `TC-065_cart-item-removed.png` | 21 Nov 2026 |
 | TC-066 | `TC-066_cart-invalid-qty.png` | 21 Nov 2026 (max-quantity message; quantity retained at 3, total 4770.00) |
 | TC-067 | `TC-067_cart-invalid-codes.png` | 21 Nov 2026 (gift-card error shown inside the Gift Cards box) |
+| TC-080 | `TC-080_checkout-empty-cart.png` | 22 Nov 2026 |
+| TC-081 | `TC-081_guest-confirm-order.png` | 22 Nov 2026 (Confirm order step; completed page pending) |
+| TC-082 | `TC-082_billing-prefilled.png` | 22 Nov 2026 |
+| TC-083 | `TC-083_required-fields.png` | 22 Nov 2026 |
+| TC-084 | `TC-084_invalid-email.png` | 22 Nov 2026 |
+| TC-084 | `TC-084_zip-phone-accepted.png` | 22 Nov 2026 |
+| TC-085 | `TC-085_shipping-methods.png` | 22 Nov 2026 |
+| TC-086 | `TC-086_confirm-cod.png` | 22 Nov 2026 |
+| TC-086 | `TC-086_order-completed.png` | 22 Nov 2026 |
+| TC-087 | `TC-087_payment-info.png` | 22 Nov 2026 |
+| TC-087 | `TC-087_order-completed.png` | 22 Nov 2026 |
+| TC-088 | `TC-088_tos-warning.png` | 22 Nov 2026 |
+| TC-090 | `TC-090_order-history.png` | 22 Nov 2026 |
+| TC-091 | `TC-091_order-details-cod.png` | 22 Nov 2026 |
+| TC-091 | `TC-091_order-details-check.png` | 22 Nov 2026 |
+| TC-092 | `TC-092_orders-redirect.png` | 22 Nov 2026 |
+| — | `TC-092_invalid-placeholder-url.png` | 22 Nov 2026 (literal `<id>` URL error page, BUG-005 observation) |
