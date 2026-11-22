@@ -291,7 +291,7 @@ execute and no stack trace was disclosed. A deeper security assessment is out of
 | Severity | Low |
 | Priority | Low |
 | Reproducibility | Always — 2/2 |
-| Evidence | `docs/screenshots/manual/TC-067_cart-invalid-codes.png` (post-login cart); message text verified in a separate session |
+| Evidence | `docs/screenshots/manual/TC-067_cart-invalid-codes.png` — the message is shown inside the Gift Cards box |
 | Status | Open |
 | Related items | Requirement `REQ-CART-06` · Scenario `SC-CART-11` · Test case `TC-067` |
 

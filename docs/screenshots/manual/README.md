@@ -83,5 +83,5 @@ TC-015_protected-redirect.png
 | TC-063 | `TC-063_cart-duplicate-add.png` | 21 Nov 2026 |
 | TC-064 | `TC-064_cart-qty-updated.png` | 21 Nov 2026 |
 | TC-065 | `TC-065_cart-item-removed.png` | 21 Nov 2026 |
-| TC-066 | `TC-066_cart-invalid-qty.png` | 21 Nov 2026 (cart restored after invalid quantities) |
-| TC-067 | `TC-067_cart-invalid-codes.png` | 21 Nov 2026 (cart after re-login) |
+| TC-066 | `TC-066_cart-invalid-qty.png` | 21 Nov 2026 (max-quantity message; quantity retained at 3, total 4770.00) |
+| TC-067 | `TC-067_cart-invalid-codes.png` | 21 Nov 2026 (gift-card error shown inside the Gift Cards box) |

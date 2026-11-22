@@ -1093,9 +1093,9 @@ on exact prices must be re-checked immediately before execution and recorded as 
 | Expected Result | Invalid input never produces a negative total or an error page. Zero or negative either removes the line or is rejected with a validation message; non-numeric input is rejected with a numeric-validation message; 99999 is either accepted or rejected with a stock/quantity message. Record the exact message and resulting quantity each time. |
 | Actual Result | **Pass.** `0` removed the line and emptied the cart; the empty-cart state was shown with no error. `-1` was retested with the line present (qty 3) and behaved the same way — the line was removed, no negative total appeared, and the cart showed the empty state. `abc` was rejected and the quantity reverted to the previous value without a visible validation message. `99999` was rejected with **"The maximum quantity allowed for purchase is 10000."** and the quantity reverted. Boundary check: **10000 was accepted**, **10001 was rejected** with the same message. No negative total or error page occurred at any point. |
 | Status | **Pass** |
-| Evidence | `docs/screenshots/manual/TC-066_cart-invalid-qty.png`<br>Message text verified independently against the live store on 21 Nov 2026 |
+| Evidence | `docs/screenshots/manual/TC-066_cart-invalid-qty.png` |
 | Linked defect | — |
-| Notes | The `-1` retest was run with the line populated and reproduced the same removal behaviour as `0`. Non-numeric input reverts silently; this is recorded as a UX observation in `bug-reports.md`, not a defect, because `REQ-CART-05` only requires totals to remain valid. The saved screenshot shows the restored cart, not the messages. |
+| Notes | The `-1` retest was run with the line populated and reproduced the same removal behaviour as `0`. Non-numeric input reverts silently; this is recorded as a UX observation in `bug-reports.md`, not a defect, because `REQ-CART-05` only requires totals to remain valid. The screenshot shows the max-quantity message with the quantity retained at 3 and the totals unchanged at 4770.00. |
 
 ---
 
@@ -1115,9 +1115,9 @@ on exact prices must be re-checked immediately before execution and recorded as 
 | Expected Result | Both codes are rejected with an explicit error and the Sub-Total stays **4770.00**. After logging out and back in, the cart still contains the laptop at quantity 3 with the same total. |
 | Actual Result | **Functional assertions pass.** After both attempts the Sub-Total stayed **4770.00**, and after logging out and back in the cart still contained the laptop at qty 3. `INVALID10` was rejected with **"The coupon code you entered couldn't be applied to your order."** The **Gift Cards** field returned the identical **coupon** wording for `INVALIDGIFT`, and the message is rendered inside the gift-card block. This wording error is filed as **BUG-006**. |
 | Status | **Pass** |
-| Evidence | `docs/screenshots/manual/TC-067_cart-invalid-codes.png`<br>Both messages reproduced in a separate session on 21 Nov 2026 |
+| Evidence | `docs/screenshots/manual/TC-067_cart-invalid-codes.png` |
 | Linked defect | BUG-006 (Low/Low — gift-card error names a coupon) |
-| Notes | The functional outcomes required by `REQ-CART-06` — rejection plus unchanged totals — are met; the defect is the message content. The saved screenshot shows the post-login cart, not the messages. |
+| Notes | The functional outcomes required by `REQ-CART-06` — rejection plus unchanged totals — are met; the defect is the message content. The screenshot shows the gift-card error rendered inside the **Gift Cards** box while the Sub-Total remains 4770.00. |
 
 ---
 
