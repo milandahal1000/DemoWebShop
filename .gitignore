@@ -9,10 +9,11 @@ venv/
 # Local secrets and environment configuration
 .env
 .env.*
-.env.example
+!.env.example
 
 # Generated test output (final evidenced artifacts are copied to docs/)
-reports/
+reports/*
+!reports/.gitkeep
 
 # Operating system / editor
 .DS_Store
