@@ -91,10 +91,10 @@ on exact prices must be re-checked immediately before execution and recorded as 
 | Cart | TC-060 – TC-067 | Written (Batch 3) |
 | Checkout | TC-080 – TC-088 | Executed (Batch 4) |
 | Orders | TC-090 – TC-092 | Executed (Batch 4) |
-| Wishlist / compare | TC-100 – TC-103 | Pending Batch 5 |
-| My account | TC-110 – TC-114 | Pending Batch 5 |
-| Contact / newsletter | TC-120 – TC-123 | Pending Batch 5 |
-| Session / edge | TC-130 – TC-132 | Pending Batch 5 |
+| Wishlist / compare | TC-100 – TC-103 | Executed (Batch 5) |
+| My account | TC-110 – TC-114 | Executed (Batch 5) |
+| Contact / newsletter | TC-120 – TC-123 | Executed (Batch 5) |
+| Session / edge | TC-130 – TC-132 | Executed (Batch 5) |
 
 ---
 
@@ -102,8 +102,8 @@ on exact prices must be re-checked immediately before execution and recorded as 
 
 | Status | Count |
 |---|---:|
-| Total written | 57 |
-| Passed | 52 |
+| Total written | 73 |
+| Passed | 68 |
 | Failed | 5 |
 | Blocked | 0 |
 | Not Run | 0 |
@@ -111,8 +111,9 @@ on exact prices must be re-checked immediately before execution and recorded as 
 
 **Batch 1 complete:** 14 executed — 11 passed, 3 failed (TC-012 → BUG-001, TC-013 → BUG-002, TC-017 → BUG-003).
 **Batch 2 complete:** 17 executed — 15 passed, 2 failed (TC-033 → BUG-004, TC-044 → BUG-005). No Critical or High severity defects.
-**Batch 4 complete:** 12 executed — 12 passed. Account orders **2420115** (COD, 17.00) and **2420116** (Check / Money Order, 15.00) are both Pending; guest order **2420136** completed without registration.
 **Batch 3 complete:** 14 executed — 14 passed. Sorting, filtering, paging, empty-cart state, add/update/remove, quantity boundaries, and invalid-code handling all behaved correctly. BUG-006 (gift-card message wording) was raised from TC-067; the case's functional assertions passed.
+**Batch 4 complete:** 12 executed — 12 passed. Account orders **2420115** (COD, 17.00) and **2420116** (Check / Money Order, 15.00) are both Pending; guest order **2420136** completed without registration.
+**Batch 5 complete:** 16 executed — 16 passed. Wishlist operations (add, remove, move to cart), comparison table (add, side-by-side display, clear), customer info persistence, address management (add, edit, required-field validation), password changes (success and wrong old password rejection), contact us submission & validation, newsletter AJAX subscription & auto-fade error, protected account redirects, and guest cart preservation across login (Assumption A7 confirmed).
 
 ---
 
@@ -1401,7 +1402,367 @@ on exact prices must be re-checked immediately before execution and recorded as 
 
 ---
 
-## 14. Manual execution protocol
+## 14. Batch 5 — Wishlist and compare
+
+### TC-100 — Add product to wishlist from product detail page
+
+| Field | Value |
+|---|---|
+| Test Case ID | TC-100 |
+| Module | Wishlist |
+| Related scenario | SC-WISH-01, SC-WISH-02 |
+| Test Case Title | Adding a product to the wishlist updates the header counter and displays the item on `/wishlist` |
+| Priority | Medium |
+| Automation candidate | Yes |
+| Preconditions | Signed in; wishlist is empty |
+| Test Data | Product `Black & White Diamond Heart` (`/black-white-diamond-heart`, 130.00) |
+| Test Steps | 1. Open `/black-white-diamond-heart`.<br>2. Click **Add to wishlist**.<br>3. Observe the green notification bar at the top and the header **Wishlist (n)** link.<br>4. Click the **Wishlist** link in the header (or navigate to `/wishlist`).<br>5. Verify the product row (image, product name, price 130.00, quantity 1, total 130.00) and the sharing URL link. |
+| Expected Result | Notification bar shows **"The product has been added to your wishlist"**. Header counter increments to **Wishlist (1)**. Opening `/wishlist` displays a table containing Black & White Diamond Heart, unit price 130.00, qty 1, subtotal 130.00, and a public wishlist URL for sharing. |
+| Actual Result | Clicking **Add to wishlist** on Black & White Diamond Heart displayed the green notification banner *"The product has been added to your wishlist"* and the header counter updated to **Wishlist (1)**. Navigating to `/wishlist` displayed the item row with unit price 130.00, qty 1, subtotal 130.00, and the public sharing link URL. |
+| Status | **Pass** |
+| Evidence | `docs/screenshots/manual/TC-100_wishlist-item.png` |
+| Linked defect | — |
+| Notes | Books and computers do not offer an "Add to wishlist" button on this store; jewelry products (such as Black & White Diamond Heart) have the wishlist feature enabled. |
+
+---
+
+### TC-101 — Remove product from wishlist
+
+| Field | Value |
+|---|---|
+| Test Case ID | TC-101 |
+| Module | Wishlist |
+| Related scenario | SC-WISH-03 |
+| Test Case Title | Ticking the remove checkbox and updating the wishlist removes the item and resets the counter |
+| Priority | Medium |
+| Automation candidate | Yes |
+| Preconditions | TC-100 executed; wishlist contains 1 product |
+| Test Data | Product in wishlist |
+| Test Steps | 1. On `/wishlist`, tick the **Remove** checkbox for the product row.<br>2. Click **Update wishlist**.<br>3. Observe the page body and the header counter. |
+| Expected Result | The product is removed from the table. The page displays **"The wishlist is empty!"**. The header counter updates to **Wishlist (0)**. |
+| Actual Result | Ticking the **Remove** checkbox and clicking **Update wishlist** removed the product row from the table. The page displayed **"The wishlist is empty!"** and the header counter updated to **Wishlist (0)**. |
+| Status | **Pass** |
+| Evidence | `docs/screenshots/manual/TC-101_wishlist-empty.png` |
+| Linked defect | — |
+| Notes | Follows the same pattern as cart item removal. |
+
+---
+
+### TC-102 — Move item from wishlist to shopping cart
+
+| Field | Value |
+|---|---|
+| Test Case ID | TC-102 |
+| Module | Wishlist |
+| Related scenario | SC-WISH-04 |
+| Test Case Title | Selecting Add to cart on the wishlist moves the product to the shopping cart and clears it from the wishlist |
+| Priority | Medium |
+| Automation candidate | Yes |
+| Preconditions | Signed in; shopping cart is empty; wishlist contains 1 product (add `Black & White Diamond Heart` back to wishlist) |
+| Test Data | Product in wishlist |
+| Test Steps | 1. Open `/black-white-diamond-heart` and click **Add to wishlist**.<br>2. Navigate to `/wishlist`.<br>3. Tick the **Add to cart** checkbox on the item's row.<br>4. Click the **Add to cart** button.<br>5. Verify the page navigates to `/cart` and check header counters.<br>6. Navigate to `/wishlist` to confirm the item is no longer in the wishlist. |
+| Expected Result | Browser navigates to `/cart`. The shopping cart table contains Black & White Diamond Heart (qty 1, total 130.00) and header shows **Shopping cart (1)**. Navigating back to `/wishlist` shows **"The wishlist is empty!"** and header **Wishlist (0)**. |
+| Actual Result | On `/wishlist`, ticking the **Add to cart** checkbox and clicking **Add to cart** redirected to `/cart`. The cart table contained Black & White Diamond Heart (qty 1, subtotal 130.00) and the header updated to **Shopping cart (1)**. Checking `/wishlist` confirmed **"The wishlist is empty!"** and header **Wishlist (0)**. The cart was cleared after verification. |
+| Status | **Pass** |
+| Evidence | `docs/screenshots/manual/TC-102_wishlist-to-cart.png` |
+| Linked defect | — |
+| Notes | Clear the item from `/cart` after this test to maintain a clean cart state. |
+
+---
+
+### TC-103 — Add products to compare list and clear comparison
+
+| Field | Value |
+|---|---|
+| Test Case ID | TC-103 |
+| Module | Compare Products |
+| Related scenario | SC-WISH-05, SC-WISH-06 |
+| Test Case Title | Adding two products to the compare list renders a side-by-side comparison table; Clear list empties it |
+| Priority | Medium |
+| Automation candidate | Yes |
+| Preconditions | Signed in or guest; compare list is empty |
+| Test Data | `Computing and Internet` (`/computing-and-internet`) and `Fiction` (`/fiction`) |
+| Test Steps | 1. Open `/computing-and-internet` and click **Add to compare list**.<br>2. Verify redirection to `/compareproducts` showing 1 product column.<br>3. Open `/fiction` and click **Add to compare list**.<br>4. Verify `/compareproducts` displays both products side-by-side with comparison rows (Remove, Name, Price).<br>5. Click **Clear list**.<br>6. Verify the comparison table disappears. |
+| Expected Result | Redirection to `/compareproducts` displays a comparison table with columns for both products. Rows show Name, Price (10.00 vs 24.00), and Remove buttons. Clicking **Clear list** clears the table and displays **"You have no items to compare."**. |
+| Actual Result | Adding Computing and Internet and Fiction to the compare list redirected to `/compareproducts`, displaying a 2-column comparison table with product names, prices (10.00 vs 24.00), and individual Remove buttons. Clicking **Clear list** cleared the comparison table and displayed **"You have no items to compare."**. |
+| Status | **Pass** |
+| Evidence | `docs/screenshots/manual/TC-103_compare-table.png`<br>`docs/screenshots/manual/TC-103_compare-cleared.png` |
+| Linked defect | — |
+| Notes | Compare products is accessible to both guests and signed-in accounts without requiring authentication. |
+
+---
+
+## 15. Batch 5 — My account
+
+### TC-110 — Update customer info and verify persistence
+
+| Field | Value |
+|---|---|
+| Test Case ID | TC-110 |
+| Module | My Account |
+| Related scenario | SC-ACC-01 |
+| Test Case Title | Modifying First Name / Last Name in `/customer/info` persists after saving and reloading |
+| Priority | Medium |
+| Automation candidate | Yes |
+| Preconditions | Signed in with test account (`milan.qa.demo.2026@example.com`) |
+| Test Data | First name: `Milan QA`, Last name: `Dahal Tester` (reverted to `Milan` / `Dahal` after test) |
+| Test Steps | 1. Open **My account** (`/customer/info`).<br>2. Change First name to `Milan QA` and Last name to `Dahal Tester`.<br>3. Click **Save**.<br>4. Reload the page (or navigate away and return to `/customer/info`).<br>5. Verify that the updated names persist in the input fields.<br>6. Revert First name to `Milan` and Last name to `Dahal`, then click **Save**. |
+| Expected Result | Saving updates the profile. Upon page reload, First name displays `Milan QA` and Last name displays `Dahal Tester`. After reverting and saving, the original names are restored. |
+| Actual Result | Changed First name to `Milan QA` and Last name to `Dahal Tester`. After clicking **Save**, the page confirmed saving and the updated name values persisted upon reload. The names were then reverted back to `Milan Dahal` and saved. |
+| Status | **Pass** |
+| Evidence | `docs/screenshots/manual/TC-110_customer-info-saved.png` |
+| Linked defect | — |
+| Notes | Email field on this page represents the identity identifier and is not directly editable without an email-change verification flow. |
+
+---
+
+### TC-111 — Add and edit address in customer addresses
+
+| Field | Value |
+|---|---|
+| Test Case ID | TC-111 |
+| Module | My Account |
+| Related scenario | SC-ACC-02, SC-ACC-03 |
+| Test Case Title | Adding a new address saves it to `/customer/addresses` and editing updates the fields |
+| Priority | High |
+| Automation candidate | Yes |
+| Preconditions | Signed in |
+| Test Data | New address: First name: `Test`, Last name: `Address`, Email: `test.addr@example.com`, Country: `United States`, State: `California`, City: `San Jose`, Address 1: `100 Innovation Way`, Zip: `95134`, Phone: `4081234567`. Edited City: `San Francisco`, Address 1: `200 Market Street` |
+| Test Steps | 1. Open **My account → Addresses** (`/customer/addresses`).<br>2. Click **Add new** (`/customer/addressadd`).<br>3. Fill in all required fields with the test data and click **Save**.<br>4. Verify that `/customer/addresses` lists the new address card.<br>5. Click **Edit** on the newly created address (`/customer/addressedit/<id>`).<br>6. Update City to `San Francisco` and Address 1 to `200 Market Street`, then click **Save**.<br>7. Verify that the address card displays the updated City and Street address. |
+| Expected Result | Saving the new address adds a card to the address list showing `Test Address`, email, address, and phone. Editing updates the address card to show `San Francisco` and `200 Market Street`. |
+| Actual Result | Successfully created new address card `Test Address` with San Jose address. Clicking **Edit** and modifying City to `San Francisco` and Address 1 to `200 Market Street` successfully saved and updated the address card on `/customer/addresses`. |
+| Status | **Pass** |
+| Evidence | `docs/screenshots/manual/TC-111_address-added.png`<br>`docs/screenshots/manual/TC-111_address-edited.png` |
+| Linked defect | — |
+| Notes | The address list retains previously created addresses from checkout testing. |
+
+---
+
+### TC-112 — Address mandatory field validation
+
+| Field | Value |
+|---|---|
+| Test Case ID | TC-112 |
+| Module | My Account |
+| Related scenario | SC-ACC-05 |
+| Test Case Title | Submitting empty address form enforces validation on all required fields |
+| Priority | High |
+| Automation candidate | Yes |
+| Preconditions | Signed in |
+| Test Data | Empty fields on `/customer/addressadd` |
+| Test Steps | 1. Navigate to `/customer/addressadd`.<br>2. Leave all fields empty and click **Save**.<br>3. Inspect and record all displayed validation messages. |
+| Expected Result | Form submission is blocked. Client-side validation displays error messages:<br>- `First name is required.`<br>- `Last name is required.`<br>- `Email is required.`<br>- `Country is required.`<br>- `City is required`<br>- `Street address is required`<br>- `Zip / postal code is required`<br>- `Phone is required` |
+| Actual Result | Clicking **Save** with all fields empty was blocked by client-side validation, rendering all 8 error messages: `First name is required.`, `Last name is required.`, `Email is required.`, `Country is required.`, `City is required`, `Street address is required`, `Zip / postal code is required`, `Phone is required`. |
+| Status | **Pass** |
+| Evidence | `docs/screenshots/manual/TC-112_address-required-fields.png` |
+| Linked defect | — |
+| Notes | Note the slight punctuation inconsistency in the application (`City is required` without trailing period vs `First name is required.`). |
+
+---
+
+### TC-113 — Change password with valid credentials
+
+| Field | Value |
+|---|---|
+| Test Case ID | TC-113 |
+| Module | My Account |
+| Related scenario | SC-ACC-06 |
+| Test Case Title | Changing password with correct current password succeeds and allows login with the new password |
+| Priority | High |
+| Automation candidate | Yes |
+| Preconditions | Signed in; current password is `agent@11` |
+| Test Data | Old password: `agent@11`, New password: `agent@12`, Confirm password: `agent@12` |
+| Test Steps | 1. Open **My account → Change password** (`/customer/changepassword`).<br>2. Enter Old password `agent@11`, New password `agent@12`, Confirm password `agent@12`.<br>3. Click **Change password**.<br>4. Verify the success message displayed on the page.<br>5. Immediately change the password back: Old password `agent@12`, New password `agent@11`, Confirm password `agent@11`, click **Change password**.<br>6. Verify success message again to ensure credentials in `.env` remain valid. |
+| Expected Result | Both changes succeed with the message **"Password was changed"**. Credentials in `.env` (`agent@11`) remain functional. |
+| Actual Result | Submitted password change from `agent@11` to `agent@12`; the page rendered **"Password was changed"**. Reverting back from `agent@12` to `agent@11` also succeeded with **"Password was changed"**, keeping account credentials in `.env` valid. |
+| Status | **Pass** |
+| Evidence | `docs/screenshots/manual/TC-113_password-changed.png` |
+| Linked defect | — |
+| Notes | Reverting immediately keeps local configuration and automated test scripts synchronized with `.env`. |
+
+---
+
+### TC-114 — Change password with incorrect current password
+
+| Field | Value |
+|---|---|
+| Test Case ID | TC-114 |
+| Module | My Account |
+| Related scenario | SC-ACC-07 |
+| Test Case Title | Changing password with an incorrect old password is rejected |
+| Priority | Medium |
+| Automation candidate | Yes |
+| Preconditions | Signed in; current password is `agent@11` |
+| Test Data | Old password: `wrongpassword123`, New password: `newpassword123`, Confirm password: `newpassword123` |
+| Test Steps | 1. Open `/customer/changepassword`.<br>2. Enter Old password `wrongpassword123`, New password `newpassword123`, Confirm password `newpassword123`.<br>3. Click **Change password**.<br>4. Observe the error message. |
+| Expected Result | Password change fails. An error message is displayed: **"Old password doesn't match"**. The password remains `agent@11`. |
+| Actual Result | Submitting `/customer/changepassword` with incorrect old password was rejected by server-side validation with the error summary message: **"Old password doesn't match"**. Account password remained unchanged. |
+| Status | **Pass** |
+| Evidence | `docs/screenshots/manual/TC-114_wrong-old-password.png` |
+| Linked defect | — |
+| Notes | Server-side validation check. |
+
+---
+
+## 16. Batch 5 — Contact us and newsletter
+
+### TC-120 — Submit Contact Us form with valid data
+
+| Field | Value |
+|---|---|
+| Test Case ID | TC-120 |
+| Module | Contact Us |
+| Related scenario | SC-CMS-01 |
+| Test Case Title | Submitting Contact Us form with valid name, email, and enquiry displays success message |
+| Priority | Medium |
+| Automation candidate | Yes |
+| Preconditions | None (accessible signed-in or signed-out) |
+| Test Data | Full name: `Milan Dahal`, Email: `milan.qa.demo.2026@example.com`, Enquiry: `This is a manual testing enquiry for the QA portfolio project.` |
+| Test Steps | 1. Open `/contactus`.<br>2. Fill in **Your name**, **Your email**, and **Enquiry**.<br>3. Click **Submit**.<br>4. Observe the result message. |
+| Expected Result | The form submits successfully and displays: **"Your enquiry has been successfully sent to the store owner."**. |
+| Actual Result | Submitting valid contact form details succeeded and rendered the confirmation result: **"Your enquiry has been successfully sent to the store owner."**. |
+| Status | **Pass** |
+| Evidence | `docs/screenshots/manual/TC-120_contact-success.png` |
+| Linked defect | — |
+| Notes | Located in the footer under "Customer service → Contact us". |
+
+---
+
+### TC-121 — Contact Us form validation
+
+| Field | Value |
+|---|---|
+| Test Case ID | TC-121 |
+| Module | Contact Us |
+| Related scenario | SC-CMS-02, SC-CMS-03 |
+| Test Case Title | Contact Us form validates mandatory fields and email format |
+| Priority | Medium |
+| Automation candidate | Yes |
+| Preconditions | None |
+| Test Data | Attempt 1: All fields empty. Attempt 2: Full name: `Milan`, Email: `bad-email-format`, Enquiry: `Test enquiry` |
+| Test Steps | 1. Open `/contactus`.<br>2. Leave all fields empty and click **Submit**.<br>3. Record the error messages.<br>4. Enter valid name and enquiry, but set email to `bad-email-format`. Click **Submit**.<br>5. Record the email error message. |
+| Expected Result | Attempt 1 displays: **"Enter your name"**, **"Enter email"**, and **"Enter enquiry"**.<br>Attempt 2 displays: **"Wrong email"** below the email field. |
+| Actual Result | Submitting empty form displayed all 3 required field errors: `Enter your name`, `Enter email`, and `Enter enquiry`. Submitting with malformed email format displayed `Wrong email` beneath the email field. |
+| Status | **Pass** |
+| Evidence | `docs/screenshots/manual/TC-121_contact-empty-errors.png`<br>`docs/screenshots/manual/TC-121_contact-invalid-email.png` |
+| Linked defect | — |
+| Notes | Uses the same "Wrong email" error string seen in registration and checkout. |
+
+---
+
+### TC-122 — Subscribe to newsletter with valid email
+
+| Field | Value |
+|---|---|
+| Test Case ID | TC-122 |
+| Module | Newsletter |
+| Related scenario | SC-CMS-04 |
+| Test Case Title | Newsletter subscription with a valid email displays success message |
+| Priority | Low |
+| Automation candidate | Yes |
+| Preconditions | Home page loaded |
+| Test Data | Email: `qa.newsletter.2026@example.com` |
+| Test Steps | 1. On the home page, scroll to the **Newsletter** section.<br>2. Enter `qa.newsletter.2026@example.com` in the **Sign up for our newsletter:** field.<br>3. Click **Subscribe**.<br>4. Observe the result text in `#newsletter-result-block`. |
+| Expected Result | An AJAX request is sent. The input block is replaced with the success message: **"Thank you for signing up! A verification email has been sent. We appreciate your interest."**. |
+| Actual Result | Submitting valid email via the home page newsletter subscription sent an AJAX request and displayed: **"Thank you for signing up! A verification email has been sent. We appreciate your interest."** in `#newsletter-result-block`. |
+| Status | **Pass** |
+| Evidence | `docs/screenshots/manual/TC-122_newsletter-success.png` |
+| Linked defect | — |
+| Notes | Executed asynchronously via `/subscribenewsletter`. |
+
+---
+
+### TC-123 — Subscribe to newsletter with invalid email
+
+| Field | Value |
+|---|---|
+| Test Case ID | TC-123 |
+| Module | Newsletter |
+| Related scenario | SC-CMS-05 |
+| Test Case Title | Newsletter subscription with empty or malformed email displays error and fades out |
+| Priority | Low |
+| Automation candidate | Yes |
+| Preconditions | Home page loaded |
+| Test Data | Attempt 1: Empty field. Attempt 2: `not-an-email` |
+| Test Steps | 1. On the home page newsletter section, leave the field empty and click **Subscribe**.<br>2. Observe the message and behavior.<br>3. Enter `not-an-email` and click **Subscribe**.<br>4. Observe the message and behavior. |
+| Expected Result | Both attempts display **"Enter valid email"** in `#newsletter-result-block`. The error message fades in and automatically fades out after 2 seconds (`delay(2000).fadeOut("slow")`). |
+| Actual Result | Both empty field and invalid email format displayed the message: **"Enter valid email"** in `#newsletter-result-block`, which automatically faded out after approximately 2 seconds as designed. |
+| Status | **Pass** |
+| Evidence | `docs/screenshots/manual/TC-123_newsletter-error.png` |
+| Linked defect | — |
+| Notes | Capturing a screenshot requires capturing within the 2-second display window before fade-out. |
+
+---
+
+## 17. Batch 5 — Session and edge behaviour
+
+### TC-130 — Signed-out access to account pages redirects to login
+
+| Field | Value |
+|---|---|
+| Test Case ID | TC-130 |
+| Module | Session & Security |
+| Related scenario | SC-SES-01 |
+| Test Case Title | Unauthenticated access to `/customer/info` and `/customer/addresses` redirects to login with ReturnUrl |
+| Priority | High |
+| Automation candidate | Yes |
+| Preconditions | Signed out (guest session) |
+| Test Data | `/customer/info`, `/customer/addresses` |
+| Test Steps | 1. Ensure you are signed out.<br>2. In the browser address bar, navigate directly to `https://demowebshop.tricentis.com/customer/info`.<br>3. Record the resulting URL and page content.<br>4. Navigate directly to `https://demowebshop.tricentis.com/customer/addresses`.<br>5. Record the resulting URL and page content. |
+| Expected Result | Both requests are blocked and redirect to:<br>- `https://demowebshop.tricentis.com/login?ReturnUrl=%2fcustomer%2finfo`<br>- `https://demowebshop.tricentis.com/login?ReturnUrl=%2fcustomer%2faddresses`<br>No account or personal data is rendered to the signed-out visitor. |
+| Actual Result | Navigating to `/customer/info` while signed out redirected to `https://demowebshop.tricentis.com/login?ReturnUrl=%2fcustomer%2finfo`. Navigating to `/customer/addresses` redirected to `https://demowebshop.tricentis.com/login?ReturnUrl=%2fcustomer%2faddresses`. No account data was exposed. |
+| Status | **Pass** |
+| Evidence | `docs/screenshots/manual/TC-130_customer-info-redirect.png`<br>`docs/screenshots/manual/TC-130_addresses-redirect.png` |
+| Linked defect | — |
+| Notes | Complements TC-015 and TC-092 for customer info and addresses. |
+
+---
+
+### TC-131 — Session persistence across navigation
+
+| Field | Value |
+|---|---|
+| Test Case ID | TC-131 |
+| Module | Session & Security |
+| Related scenario | SC-SES-02 |
+| Test Case Title | Authenticated session persists across category navigation and cart interactions without premature logout |
+| Priority | High |
+| Automation candidate | Yes |
+| Preconditions | Signed in with test account |
+| Test Data | Top-level category links |
+| Test Steps | 1. Sign in with test account.<br>2. Navigate through Books, Computers, Electronics, Apparel & Shoes, Digital downloads, Jewelry, and Gift Cards.<br>3. Verify that the header continuously shows the account email (`milan.qa.demo.2026@example.com`) and **Log out** link across all page navigations. |
+| Expected Result | The session cookie (`.Nop.Customer`) remains valid; header persists user email across all navigations without requiring re-authentication. |
+| Actual Result | Navigating through multiple categories (Books, Computers, Apparel, Jewelry) while authenticated consistently preserved the session cookie; header continuously displayed `milan.qa.demo.2026@example.com` and **Log out** without unexpected session termination. |
+| Status | **Pass** |
+| Evidence | `docs/screenshots/manual/TC-131_session-persisted.png` |
+| Linked defect | — |
+| Notes | Basic session stability check. |
+
+---
+
+### TC-132 — Guest cart is preserved after logging in
+
+| Field | Value |
+|---|---|
+| Test Case ID | TC-132 |
+| Module | Session & Security |
+| Related scenario | SC-SES-04, Assumption A7 |
+| Test Case Title | Products added as a guest are preserved in the shopping cart upon user login |
+| Priority | Medium |
+| Automation candidate | Yes |
+| Preconditions | Signed out (guest); test account shopping cart is empty |
+| Test Data | Product `Computing and Internet` (`/computing-and-internet`, 10.00) |
+| Test Steps | 1. While signed out, navigate to `/computing-and-internet` and click **Add to cart**.<br>2. Open `/cart` to confirm the guest cart contains **Computing and Internet** (qty 1, total 10.00).<br>3. Click **Log in** in the header.<br>4. Log in using `milan.qa.demo.2026@example.com` and `agent@11`.<br>5. After login, open `/cart` and check header **Shopping cart (n)** counter.<br>6. Empty the cart after recording the result to keep the environment clean. |
+| Expected Result | After signing in, the shopping cart retains the **Computing and Internet** book (qty 1, total 10.00) and the header shows **Shopping cart (1)**. The guest session cart is successfully migrated/merged into the authenticated account. Assumption A7 is confirmed. |
+| Actual Result | Added Computing and Internet (10.00) as a guest; verified cart contained 1 item (`TC-132_guest-cart.png`). Logged in with test account; the cart retained the book (qty 1, total 10.00) and header displayed **Shopping cart (1)** (`TC-132_guest-cart-merged.png`). Assumption A7 confirmed. Cart was cleared after test. |
+| Status | **Pass** |
+| Evidence | `docs/screenshots/manual/TC-132_guest-cart.png`<br>`docs/screenshots/manual/TC-132_guest-cart-merged.png` |
+| Linked defect | — |
+| Notes | Directly addresses Assumption A7 from the Requirements Traceability Matrix. |
+
+---
+
+## 18. Manual execution protocol
 
 For every case:
 

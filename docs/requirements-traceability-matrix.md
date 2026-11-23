@@ -212,7 +212,7 @@ manual case will be automated, and the README will state the real coverage.
 | A4 | Payment methods include Cash On Delivery and Check / Money Order | SC-CHK-07, SC-CHK-08 | **Confirmed 21 Nov 2026** — both offered, with fees of 7.00 and 5.00; Credit Card and Purchase Order are also present |
 | A5 | Gift card requires recipient name, recipient email, sender name, sender email | SC-PRD-06 | Submit with individual fields empty |
 | A6 | Postal code and phone validation rules exist in checkout | SC-CHK-05 | **Rejected 21 Nov 2026** — only presence is enforced; an `!!` zip and `abc` phone were accepted. Only the email format is validated ("Wrong email"), recorded as an assumption correction, not a defect |
-| A7 | Guest cart is preserved after login | SC-SES-04 | Add as guest, sign in, inspect cart |
+| A7 | Guest cart is preserved after login | SC-SES-04 | **Confirmed 23 Nov 2026** — guest cart item (Computing and Internet) retained in cart upon login with Shopping cart (1) |
 | A8 | Email uniqueness is enforced at registration | SC-REG-04 | **Confirmed 18 Nov 2026** — duplicate email rejected |
 | A9 | The wishlist requires authentication | SC-SES-01, TC-014 | **Rejected 18 Nov 2026** — guest wishlist is accessible and shows an empty list; not a defect |
 

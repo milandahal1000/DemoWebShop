@@ -101,4 +101,26 @@ TC-015_protected-redirect.png
 | TC-091 | `TC-091_order-details-cod.png` | 22 Nov 2026 |
 | TC-091 | `TC-091_order-details-check.png` | 22 Nov 2026 |
 | TC-092 | `TC-092_orders-redirect.png` | 22 Nov 2026 |
+| TC-092 | `TC-092_orderdetails-redirect.png` | 22 Nov 2026 |
 | — | `TC-092_invalid-placeholder-url.png` | 22 Nov 2026 (literal `<id>` URL error page, BUG-005 observation) |
+| TC-100 | `TC-100_wishlist-item.png` | 23 Nov 2026 |
+| TC-101 | `TC-101_wishlist-empty.png` | 23 Nov 2026 |
+| TC-102 | `TC-102_wishlist-to-cart.png` | 23 Nov 2026 |
+| TC-103 | `TC-103_compare-table.png` | 23 Nov 2026 |
+| TC-103 | `TC-103_compare-cleared.png` | 23 Nov 2026 |
+| TC-110 | `TC-110_customer-info-saved.png` | 23 Nov 2026 |
+| TC-111 | `TC-111_address-added.png` | 23 Nov 2026 |
+| TC-111 | `TC-111_address-edited.png` | 23 Nov 2026 |
+| TC-112 | `TC-112_address-required-fields.png` | 23 Nov 2026 |
+| TC-113 | `TC-113_password-changed.png` | 23 Nov 2026 |
+| TC-114 | `TC-114_wrong-old-password.png` | 23 Nov 2026 |
+| TC-120 | `TC-120_contact-success.png` | 23 Nov 2026 |
+| TC-121 | `TC-121_contact-empty-errors.png` | 23 Nov 2026 |
+| TC-121 | `TC-121_contact-invalid-email.png` | 23 Nov 2026 |
+| TC-122 | `TC-122_newsletter-success.png` | 23 Nov 2026 |
+| TC-123 | `TC-123_newsletter-error.png` | 23 Nov 2026 (auto-fades after 2s) |
+| TC-130 | `TC-130_customer-info-redirect.png` | 23 Nov 2026 |
+| TC-130 | `TC-130_addresses-redirect.png` | 23 Nov 2026 |
+| TC-131 | `TC-131_session-persisted.png` | 23 Nov 2026 |
+| TC-132 | `TC-132_guest-cart.png` | 23 Nov 2026 |
+| TC-132 | `TC-132_guest-cart-merged.png` | 23 Nov 2026 |
