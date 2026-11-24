@@ -1,12 +1,18 @@
 """
 Pytest configuration and reusable fixtures for Demo Web Shop automation.
-Configures WebDriver lifecycle, CLI arguments, and HTML test report enhancements.
+Provides WebDriver lifecycle, reusable preconditions, and failure reporting hooks.
 """
 from pathlib import Path
 import pytest
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
-from config.config import BROWSER_BINARY, BASE_URL, PAGE_LOAD_TIMEOUT
+from pytest_html import extras
+
+from config.config import BROWSER_BINARY, BASE_URL, PAGE_LOAD_TIMEOUT, DEMO_EMAIL, DEMO_PASSWORD
+from pages.login_page import LoginPage
+from pages.product_page import ProductPage
+from pages.cart_page import CartPage
+from config.test_data import PRODUCT_DATA
 
 
 def pytest_addoption(parser):
@@ -61,18 +67,58 @@ def driver(request):
     driver_instance.quit()
 
 
+@pytest.fixture(scope="function")
+def logged_in_driver(driver):
+    """
+    Reusable fixture providing an authenticated session.
+    Logs in with test credentials and confirms authenticated state before test runs.
+    """
+    login_page = LoginPage(driver)
+    login_page.open()
+    login_page.login(DEMO_EMAIL, DEMO_PASSWORD)
+    assert login_page.is_logout_link_visible(), "Precondition failed: login unsuccessful"
+
+    yield driver
+
+
+@pytest.fixture(scope="function")
+def cart_with_item(driver):
+    """
+    Reusable fixture that ensures the shopping cart contains one standard item.
+    Guarantees clean cart teardown after the test finishes.
+    """
+    product_page = ProductPage(driver)
+    product_page.open(PRODUCT_DATA["simple_book"]["slug"])
+    product_page.add_to_cart()
+
+    yield driver
+
+    # Teardown: clear cart to avoid leftover state
+    try:
+        cart_page = CartPage(driver)
+        cart_page.open()
+        cart_page.clear_cart_if_not_empty()
+    except Exception:
+        pass
+
+
 @pytest.hookimpl(hookwrapper=True)
 def pytest_runtest_makereport(item, call):
     """
-    Hook to capture screenshot on test failure and save to reports/screenshots/.
+    Hook to capture screenshot on test failure, save to disk, and attach to HTML report.
     """
     outcome = yield
     report = outcome.get_result()
 
     if report.when == "call" and report.failed:
-        driver_instance = item.funcargs.get("driver", None)
+        driver_instance = item.funcargs.get("driver") or item.funcargs.get("logged_in_driver")
         if driver_instance:
             reports_dir = Path("reports/screenshots")
             reports_dir.mkdir(parents=True, exist_ok=True)
             screenshot_path = reports_dir / f"{item.name}_failed.png"
             driver_instance.save_screenshot(str(screenshot_path))
+
+            # Attach to pytest-html report
+            extra = getattr(report, "extra", [])
+            extra.append(extras.image(str(screenshot_path)))
+            report.extra = extra
