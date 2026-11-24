@@ -122,3 +122,26 @@ def pytest_runtest_makereport(item, call):
             extra = getattr(report, "extra", [])
             extra.append(extras.image(str(screenshot_path)))
             report.extra = extra
+
+
+def pytest_html_report_title(report):
+    """Customize the title of the HTML test report."""
+    report.title = "Demo Web Shop — QA Automation Test Report"
+
+
+def pytest_metadata(metadata, config):
+    """
+    Customize the environment and test suite metadata displayed in the HTML report.
+    """
+    metadata["Project Name"] = "Demo Web Shop QA Automation Portfolio"
+    metadata["QA Engineer"] = "Milan Dahal"
+    metadata["Application Under Test"] = BASE_URL
+    metadata["Browser"] = "Brave (Headless)" if BROWSER_BINARY else "Default Chrome"
+    metadata["Automation Framework"] = "Selenium WebDriver 4.54 + Pytest 9.2"
+    metadata["Design Pattern"] = "Page Object Model (POM)"
+    metadata["Environment"] = "Public Demo Store"
+
+    # Clean up verbose system environment variables from report table
+    for noisy_key in ["JAVA_HOME", "SHELL", "PWD"]:
+        metadata.pop(noisy_key, None)
+
